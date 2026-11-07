@@ -12,11 +12,31 @@ public class Bus implements Printable {
     private final boolean[] seats;
 
     public Bus(int id, String route, String departure, double fare, int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("Bus capacity must be at least 1.");
+        }
+        if (fare < 0) {
+            throw new IllegalArgumentException("Fare cannot be negative.");
+        }
         this.id = id;
         this.route = route;
         this.departure = departure;
         this.fare = fare;
         this.seats = new boolean[capacity];
+    }
+
+    /**
+     * Safe way to create a bus.
+     * If a value is not accepted (no seats, negative fare), it prints the
+     * reason and returns null instead of crashing the program.
+     */
+    public static Bus create(int id, String route, String departure, double fare, int capacity) {
+        try {
+            return new Bus(id, route, departure, fare, capacity);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Could not create bus " + id + ": " + e.getMessage());
+            return null;
+        }
     }
 
     // ---------- Getters ----------
@@ -86,13 +106,13 @@ public class Bus implements Printable {
 
     // ---------- Printable ----------
     public static void printHeader() {
-        System.out.printf("%-4s %-22s %-10s %-10s %-8s%n", "ID", "Route", "Departure", "Fare", "Seats");
-        System.out.println("---------------------------------------------------");
+        System.out.printf("%-4s %-27s %-10s %-10s %-8s%n", "ID", "Route", "Departure", "Fare", "Seats");
+        System.out.println("--------------------------------------------------------");
     }
 
     @Override
     public void print() {
-        System.out.printf("%-4d %-22s %-10s P%-9.2f %d/%d%n",
+        System.out.printf("%-4d %-27s %-10s P%-9.2f %d/%d%n",
                 id, route, departure, fare, availableSeats(), seats.length);
     }
 }
