@@ -16,3 +16,11 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 ## Dependency Management
 
 The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+
+src/
+  app/         Main.java                          starts the program and connects the objects
+  ui/          ConsoleMenu, LoginScreen, ConsoleInput, BusPrinter, TicketPrinter
+  service/     BookingService, AuthService, BookingException
+  repository/  BusRepository, InMemoryBusRepository, TicketRepository, FileTicketRepository
+  model/       Passenger (+ Regular, Discounted, Student, Senior, PWD),
+               User (+ Admin, Cashier), Bus, Ticket
