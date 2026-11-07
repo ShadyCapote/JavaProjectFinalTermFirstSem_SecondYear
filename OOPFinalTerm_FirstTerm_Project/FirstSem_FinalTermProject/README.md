@@ -57,3 +57,28 @@ BusTicketingSystem/
 ### Package
 
 All classes are in the package `edu.slsu.IT205`.
+
+
+## Accounts and Roles
+
+The program starts at a login screen. You have 3 attempts, and typing `exit` as the username quits.
+
+| Username | Password | Role |
+|---|---|---|
+| admin | admin123 | Admin |
+| cashier | cashier123 | Cashier |
+
+### What each role can do
+
+| Menu option | Admin | Cashier |
+|---|:---:|:---:|
+| View available buses | Yes | Yes |
+| Book a ticket | Yes | Yes |
+| View all records | Yes | Yes |
+| Search a record by ticket number | Yes | Yes |
+| Cancel a ticket | Yes | No |
+| Logout | Yes | Yes |
+
+A Cashier who chooses "Cancel a Ticket" sees "Access denied. Only an Admin can cancel tickets."
+
+Passwords are not stored as plain text. Only a SHA-256 hash is kept in memory.
