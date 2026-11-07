@@ -1,2 +1,1 @@
 TKT-1001|Slim Shady Capote|23|Regular|2|2|180.0|2026-11-05 16:59
-TKT-1002|slim shady|45|Student|3|20|176.0|2026-11-05 19:19
