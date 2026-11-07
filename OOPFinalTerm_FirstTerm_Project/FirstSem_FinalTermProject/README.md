@@ -82,3 +82,141 @@ The program starts at a login screen. You have 3 attempts, and typing `exit` as 
 A Cashier who chooses "Cancel a Ticket" sees "Access denied. Only an Admin can cancel tickets."
 
 Passwords are not stored as plain text. Only a SHA-256 hash is kept in memory.
+
+## Class Diagram
+
+### Inheritance: passengers and users
+
+```mermaid
+classDiagram
+    class Passenger {
+        <<abstract>>
+        -String name
+        -int age
+        +getName() String
+        +getAge() int
+        +getType()* String
+        +getDiscountRate()* double
+        +computeFare(double baseFare) double
+        +create(String type, String name, int age)$ Passenger
+    }
+    class RegularPassenger {
+        +getType() String
+        +getDiscountRate() double
+    }
+    class DiscountedPassenger {
+        <<abstract>>
+        +double DISCOUNT_RATE$
+        +getDiscountRate() double
+    }
+    class StudentPassenger {
+        +getType() String
+    }
+    class SeniorPassenger {
+        +getType() String
+    }
+    class PWDPassenger {
+        +getType() String
+    }
+    Passenger <|-- RegularPassenger
+    Passenger <|-- DiscountedPassenger
+    DiscountedPassenger <|-- StudentPassenger
+    DiscountedPassenger <|-- SeniorPassenger
+    DiscountedPassenger <|-- PWDPassenger
+
+    class User {
+        <<abstract>>
+        -String username
+        -String passwordHash
+        +getUsername() String
+        +checkPassword(String password) boolean
+        +getRole()* String
+        +canCancelTickets()* boolean
+    }
+    class AdminUser {
+        +getRole() String
+        +canCancelTickets() boolean
+    }
+    class CashierUser {
+        +getRole() String
+        +canCancelTickets() boolean
+    }
+    User <|-- AdminUser
+    User <|-- CashierUser
+```
+
+### How the classes work together
+
+```mermaid
+classDiagram
+    class Printable {
+        <<interface>>
+        +print()
+    }
+    class Bus {
+        -int id
+        -String route
+        -String departure
+        -double fare
+        -boolean[] seats
+        +bookSeat(int seatNo) boolean
+        +releaseSeat(int seatNo)
+        +availableSeats() int
+        +isFull() boolean
+    }
+    class Ticket {
+        -String ticketNo
+        -int seatNo
+        -double amountPaid
+        -String dateBooked
+        +toFileLine() String
+    }
+    class BusManager {
+        +findById(int id) Bus
+        +displayAll()
+    }
+    class RecordManager {
+        +add(Ticket ticket)
+        +findByNo(String ticketNo) Ticket
+        +cancel(String ticketNo) boolean
+        +getTotalSales() double
+    }
+    class LogIn {
+        +start() User
+    }
+    class ConsoleInput {
+        +readLine(String prompt) String
+        +readInt(String prompt) int
+        +readPassword(String prompt) String
+    }
+    class BookingException
+    class BusTicketingSystem {
+        +main(String[] args)$
+        +run()
+    }
+    Printable <|.. Bus
+    Printable <|.. Ticket
+    Exception <|-- BookingException
+    Ticket --> Passenger : passenger
+    Ticket --> Bus : bus
+    BusManager o-- Bus : buses
+    RecordManager o-- Ticket : tickets
+    RecordManager --> BusManager : looks up buses
+    LogIn o-- User : accounts
+    LogIn --> ConsoleInput
+    BusTicketingSystem --> BusManager
+    BusTicketingSystem --> RecordManager
+    BusTicketingSystem --> LogIn
+    BusTicketingSystem --> ConsoleInput
+    BusTicketingSystem ..> BookingException : catches
+```
+
+**How to read the arrows**
+
+| Arrow | Meaning |
+|---|---|
+| `<\|--` | inheritance ("is a"), for example a Student is a Passenger |
+| `<\|..` | implements an interface |
+| `o--` | has a collection of, for example BusManager has many Buses |
+| `-->` | uses or holds a reference to |
+| `..>` | depends on, here catching the exception |
