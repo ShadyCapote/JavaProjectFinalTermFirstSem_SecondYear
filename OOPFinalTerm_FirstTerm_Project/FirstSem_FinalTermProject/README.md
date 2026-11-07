@@ -23,4 +23,37 @@ src/
   service/     BookingService, AuthService, BookingException
   repository/  BusRepository, InMemoryBusRepository, TicketRepository, FileTicketRepository
   model/       Passenger (+ Regular, Discounted, Student, Senior, PWD),
-               User (+ Admin, Cashier), Bus, Ticketq
+               User (+ Admin, Cashier), Bus, Ticket
+
+
+               ## Project Structure
+
+```
+BusTicketingSystem/
+|-- README.md
+|-- .gitignore
+`-- src/
+    `-- edu/slsu/IT205/
+        |-- BusTicketingSystem.java   main() and the menu
+        |-- LogIn.java                login screen and user accounts
+        |-- ConsoleInput.java         reads numbers, text and passwords safely
+        |-- BookingException.java     error for an invalid booking
+        |-- Printable.java            interface for printable objects
+        |-- Passenger.java            abstract parent of all passengers
+        |-- RegularPassenger.java     full fare
+        |-- DiscountedPassenger.java  parent of the 20% discount types
+        |-- StudentPassenger.java
+        |-- SeniorPassenger.java
+        |-- PWDPassenger.java
+        |-- User.java                 abstract parent of all users
+        |-- AdminUser.java            can cancel tickets
+        |-- CashierUser.java          cannot cancel tickets
+        |-- Bus.java                  route, fare and seats
+        |-- Ticket.java               a booked ticket
+        |-- BusManager.java           the list of buses
+        `-- RecordManager.java        all tickets, saved in tickets.txt
+```
+
+### Package
+
+All classes are in the package `edu.slsu.IT205`.
