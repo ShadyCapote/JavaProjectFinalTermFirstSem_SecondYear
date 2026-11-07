@@ -1,8 +1,15 @@
 package edu.slsu.IT205;
 
 /**
- * Represents a bus trip with its own seats.
- * The seat array is private; it can only be changed through methods.
+ * Represents one bus trip with its own seats.
+ * <p>
+ * A bus knows its route, departure time, fare and which seats are taken.
+ * The seat array is private (encapsulation), so seats can only be changed
+ * through {@link #bookSeat(int)} and {@link #releaseSeat(int)}. Seat numbers
+ * start at 1, not 0.
+ *
+ * @see Ticket
+ * @see BusManager
  */
 public class Bus implements Printable {
     private final int id;
@@ -11,6 +18,18 @@ public class Bus implements Printable {
     private final double fare;
     private final boolean[] seats;
 
+    /**
+     * Creates a bus with all seats free.
+     *
+     * @param id        the bus number
+     * @param route     the route, for example {@code "Southern Leyte - Maasin"}
+     * @param departure the departure time, for example {@code "06:00 AM"}
+     * @param fare      the full fare in pesos
+     * @param capacity  the number of seats
+     * @throws IllegalArgumentException if the capacity is less than 1
+     *                                  or the fare is negative
+     * @see #create(int, String, String, double, int)
+     */
     public Bus(int id, String route, String departure, double fare, int capacity) {
         if (capacity <= 0) {
             throw new IllegalArgumentException("Bus capacity must be at least 1.");
@@ -29,6 +48,13 @@ public class Bus implements Printable {
      * Safe way to create a bus.
      * If a value is not accepted (no seats, negative fare), it prints the
      * reason and returns null instead of crashing the program.
+     *
+     * @param id        the bus number
+     * @param route     the route
+     * @param departure the departure time
+     * @param fare      the full fare in pesos
+     * @param capacity  the number of seats
+     * @return the new bus, or {@code null} if a value was not accepted
      */
     public static Bus create(int id, String route, String departure, double fare, int capacity) {
         try {
@@ -40,36 +66,82 @@ public class Bus implements Printable {
     }
 
     // ---------- Getters ----------
+
+    /**
+     * Returns the bus number.
+     *
+     * @return the id
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Returns the route.
+     *
+     * @return the route name
+     */
     public String getRoute() {
         return route;
     }
 
+    /**
+     * Returns the departure time.
+     *
+     * @return the departure time as text
+     */
     public String getDeparture() {
         return departure;
     }
 
+    /**
+     * Returns the full fare, before any passenger discount.
+     *
+     * @return the fare in pesos
+     */
     public double getFare() {
         return fare;
     }
 
+    /**
+     * Returns the total number of seats, taken or free.
+     *
+     * @return the capacity
+     */
     public int getCapacity() {
         return seats.length;
     }
 
     // ---------- Seat logic ----------
+
+    /**
+     * Checks that a seat number exists on this bus.
+     *
+     * @param seatNo the seat number, starting at 1
+     * @return {@code true} if the number is from 1 up to the capacity
+     */
     public boolean isValidSeat(int seatNo) {
         return seatNo >= 1 && seatNo <= seats.length;
     }
 
+    /**
+     * Checks whether a seat is already taken.
+     *
+     * @param seatNo the seat number, starting at 1
+     * @return {@code true} if the seat exists and is taken;
+     *         {@code false} if it is free or does not exist
+     */
     public boolean isSeatTaken(int seatNo) {
         return isValidSeat(seatNo) && seats[seatNo - 1];
     }
 
-    /** Returns true if the seat was successfully reserved. */
+    /**
+     * Reserves a seat.
+     *
+     * @param seatNo the seat number, starting at 1
+     * @return {@code true} if the seat was reserved; {@code false} if the
+     *         number is invalid or the seat is already taken
+     */
     public boolean bookSeat(int seatNo) {
         if (!isValidSeat(seatNo) || seats[seatNo - 1])
             return false;
@@ -77,11 +149,22 @@ public class Bus implements Printable {
         return true;
     }
 
+    /**
+     * Frees a seat, for example when a ticket is cancelled.
+     * An invalid seat number is ignored.
+     *
+     * @param seatNo the seat number, starting at 1
+     */
     public void releaseSeat(int seatNo) {
         if (isValidSeat(seatNo))
             seats[seatNo - 1] = false;
     }
 
+    /**
+     * Counts the free seats.
+     *
+     * @return the number of seats that are not taken
+     */
     public int availableSeats() {
         int count = 0;
         for (boolean taken : seats)
@@ -90,10 +173,19 @@ public class Bus implements Printable {
         return count;
     }
 
+    /**
+     * Checks whether every seat is taken.
+     *
+     * @return {@code true} if there are no free seats left
+     */
     public boolean isFull() {
         return availableSeats() == 0;
     }
 
+    /**
+     * Prints the seat map to the console, four seats per row.
+     * Free seats show their number and taken seats show {@code XX}.
+     */
     public void showSeatMap() {
         System.out.println("\nSeat Map (XX = taken)");
         for (int i = 0; i < seats.length; i++) {
@@ -105,11 +197,20 @@ public class Bus implements Printable {
     }
 
     // ---------- Printable ----------
+
+    /**
+     * Prints the column titles of the bus table.
+     * Call this once before printing several buses with {@link #print()}.
+     */
     public static void printHeader() {
         System.out.printf("%-4s %-27s %-10s %-10s %-8s%n", "ID", "Route", "Departure", "Fare", "Seats");
         System.out.println("--------------------------------------------------------");
     }
 
+    /**
+     * Prints this bus as one row of the bus table: id, route, departure,
+     * fare, and free seats out of the total.
+     */
     @Override
     public void print() {
         System.out.printf("%-4d %-27s %-10s P%-9.2f %d/%d%n",
