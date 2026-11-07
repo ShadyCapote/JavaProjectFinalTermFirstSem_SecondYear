@@ -1,33 +1,35 @@
 package edu.slsu.IT205;
 
-import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+/**
+ * Manages the list of buses.
+ */
+public class BusManager {
+    private final List<Bus> buses = new ArrayList<>();
 
-class BusManagerTest {
-
-    @Test
-    void findsAnExistingBusById() {
-        BusManager manager = new BusManager();
-        Bus bus = manager.findById(1);
-        assertNotNull(bus);
-        assertEquals(1, bus.getId());
+    public BusManager() {
+        buses.add(new Bus(1, "Southern Leyte - Silago", "06:00 AM", 200.00, 20));
+        buses.add(new Bus(2, "Southern Leyte - Sogod", "08:00 AM", 150.00, 20));
+        buses.add(new Bus(3, "Southern Leyte - Maasin", "09:30 AM", 180.00, 20));
+        buses.add(new Bus(4, "Southern Leyte - Hilongos", "08:00 PM", 220.00, 20));
     }
 
-    @Test
-    void returnsNullForAnUnknownBusId() {
-        BusManager manager = new BusManager();
-        assertNull(manager.findById(999));
-        assertNull(manager.findById(0));
+    /** Returns the bus with this ID, or null if none. */
+    public Bus findById(int id) {
+        for (Bus b : buses) {
+            if (b.getId() == id)
+                return b;
+        }
+        return null;
     }
 
-    @Test
-    void allFourBusesExist() {
-        BusManager manager = new BusManager();
-        for (int id = 1; id <= 4; id++) {
-            assertNotNull(manager.findById(id), "Bus " + id + " should exist");
+    public void displayAll() {
+        System.out.println("\n----------------- AVAILABLE BUSES -----------------");
+        Bus.printHeader();
+        for (Bus b : buses) {
+            b.print();
         }
     }
 }

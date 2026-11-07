@@ -2,6 +2,7 @@ package edu.slsu.IT205;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Login class: stores the user accounts and verifies username/password.
@@ -10,6 +11,11 @@ import java.util.List;
  * Default accounts:
  * admin / admin123
  * cashier / cashier123
+ *
+ * Exception handling used in this class:
+ * - IllegalArgumentException -> an account could not be created (constructor)
+ * - NoSuchElementException -> the keyboard input was closed (start)
+ * - RuntimeException -> the password could not be checked (start)
  */
 public class LogIn {
     private static final int MAX_ATTEMPTS = 3;
@@ -19,15 +25,21 @@ public class LogIn {
 
     public LogIn(ConsoleInput input) {
         this.input = input;
-        users.add(new AdminUser("admin", "admin123"));
-        users.add(new CashierUser("cashier", "cashier123"));
+        try {
+            users.add(new AdminUser("admin", "admin123"));
+            users.add(new CashierUser("cashier", "cashier123"));
+        } catch (IllegalArgumentException e) {
+            // Thrown when a username or password is empty
+            // (only if your User class checks this).
+            System.out.println("Could not create the default accounts: " + e.getMessage());
+        }
     }
 
     /**
      * Shows the login screen.
      * 
-     * @return the logged-in User, or null if the person typed "exit"
-     *         or failed too many times.
+     * @return the logged-in User, or null if the person typed "exit",
+     *         failed too many times, or the input was closed.
      */
     public User start() {
         int attempts = 0;
@@ -36,12 +48,30 @@ public class LogIn {
             System.out.println("\n==========================================");
             System.out.println("              LOGIN");
             System.out.println("==========================================");
-            String username = input.readLine("Username (type 'exit' to quit): ");
-            if (username.equalsIgnoreCase("exit"))
-                return null;
-            String password = input.readPassword("Password: ");
 
-            User user = authenticate(username, password);
+            String username;
+            String password;
+            try {
+                username = input.readLine("Username (type 'exit' to quit): ");
+                if (username.equalsIgnoreCase("exit"))
+                    return null;
+                password = input.readPassword("Password: ");
+            } catch (NoSuchElementException e) {
+                // The keyboard input was closed (Ctrl+D / Ctrl+Z),
+                // so nothing more can be read. Leave the login politely.
+                System.out.println("\nInput was closed. Closing the login.");
+                return null;
+            }
+
+            User user = null;
+            try {
+                user = authenticate(username, password);
+            } catch (RuntimeException e) {
+                // For example, the password could not be checked.
+                // This counts as a failed attempt instead of crashing the program.
+                System.out.println("Login error: " + e.getMessage());
+            }
+
             if (user != null) {
                 System.out.println("\nWelcome, " + user.getUsername() + " (" + user.getRole() + ")!");
                 return user;

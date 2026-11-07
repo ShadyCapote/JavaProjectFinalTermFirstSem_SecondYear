@@ -23,4 +23,4 @@ src/
   service/     BookingService, AuthService, BookingException
   repository/  BusRepository, InMemoryBusRepository, TicketRepository, FileTicketRepository
   model/       Passenger (+ Regular, Discounted, Student, Senior, PWD),
-               User (+ Admin, Cashier), Bus, Ticket
+               User (+ Admin, Cashier), Bus, Ticketq
