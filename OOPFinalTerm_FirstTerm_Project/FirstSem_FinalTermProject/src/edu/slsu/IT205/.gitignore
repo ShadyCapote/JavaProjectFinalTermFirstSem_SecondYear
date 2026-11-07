@@ -1,0 +1,18 @@
+# Compiled files
+out/
+*.class
+
+# Saved tickets (your data, not source code)
+tickets.txt
+
+# Helper file for building on Windows
+sources.txt
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+nbproject/private/
+.classpath
+.project
+.settings/
