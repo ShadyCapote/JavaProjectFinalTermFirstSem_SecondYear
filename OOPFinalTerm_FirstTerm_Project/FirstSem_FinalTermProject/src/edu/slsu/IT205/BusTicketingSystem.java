@@ -71,6 +71,9 @@ public class BusTicketingSystem {
                     case 6:
                         viewPassengersOnBus();
                         break;
+                    case 7:
+                        viewSalesSummary();
+                        break;
                     case 0:
                         System.out.println("\nLogged out.");
                         break;
@@ -101,6 +104,7 @@ public class BusTicketingSystem {
         System.out.println("  [4] Search Record (by Ticket No.)");
         System.out.println("  [5] Cancel a Ticket");
         System.out.println("  [6] View Passengers on a Bus");
+        System.out.println("  [7] Sales Summary per Route (Admin only)");
         System.out.println("  [0] Logout");
         System.out.println("==========================================");
     }
@@ -186,6 +190,34 @@ public class BusTicketingSystem {
         }
         System.out.println("-------------------------------------------------------");
         System.out.println(tickets.size() + " of " + bus.getCapacity() + " seats booked.");
+    }
+
+    private void viewSalesSummary() {
+        // Only an Admin may see the sales
+        if (!isAdmin()) {
+            System.out.println("\nAccess denied. Only an Admin can view the sales summary.");
+            return;
+        }
+
+        System.out.println("\n----------------- SALES SUMMARY PER ROUTE -----------------");
+        System.out.printf("%-4s %-27s %-8s %-10s%n", "ID", "Route", "Tickets", "Sales");
+        System.out.println("--------------------------------------------------------");
+        int totalTickets = 0;
+        for (Bus bus : busManager.getBuses()) {
+            int count = recordManager.getTicketsByBus(bus.getId()).size();
+            totalTickets += count;
+            System.out.printf("%-4d %-27s %-8d P%-9.2f%n",
+                    bus.getId(), bus.getRoute(), count,
+                    recordManager.getSalesByBus(bus.getId()));
+        }
+        System.out.println("--------------------------------------------------------");
+        System.out.printf("%-4s %-27s %-8d P%-9.2f%n", "", "TOTAL",
+                totalTickets, recordManager.getTotalSales());
+    }
+
+    /** Returns true if the logged-in user is an Admin. */
+    private boolean isAdmin() {
+        return "Admin".equals(currentUser.getRole());
     }
 
     private void searchRecord() {

@@ -1,6 +1,7 @@
 package edu.slsu.IT205;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,6 +35,16 @@ public class BusManager {
         } catch (IllegalArgumentException e) {
             System.out.println("Skipped bus " + id + ": " + e.getMessage());
         }
+    }
+
+    /**
+     * Returns all the buses. The list is read-only, so other classes can look
+     * at the buses but cannot add or remove them.
+     *
+     * @return the list of buses
+     */
+    public List<Bus> getBuses() {
+        return Collections.unmodifiableList(buses);
     }
 
     /** Returns the bus with this ID, or null if none. */
