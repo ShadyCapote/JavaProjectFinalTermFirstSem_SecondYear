@@ -145,4 +145,18 @@ class TicketTest {
         assertTrue(out.contains("Juan Dela Cruz"));
         assertTrue(out.contains("Southern Leyte - Silago"));
     }
+
+    @Test
+    void printedStudentTicketShowsTwentyPercentDiscount() {
+        Ticket t = new Ticket("TKT-1014", new StudentPassenger("Ana Cruz", 18), bus, 5);
+        String out = capturePrint(t::print);
+        assertTrue(out.contains("Discount  : 20%"));
+    }
+
+    @Test
+    void printedRegularTicketShowsZeroPercentDiscount() {
+        Ticket t = new Ticket("TKT-1015", new RegularPassenger("Juan", 25), bus, 6);
+        String out = capturePrint(t::print);
+        assertTrue(out.contains("Discount  : 0%"));
+    }
 }
