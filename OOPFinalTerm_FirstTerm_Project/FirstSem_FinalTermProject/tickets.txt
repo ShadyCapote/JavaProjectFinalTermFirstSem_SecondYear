@@ -1,2 +1,2 @@
 TKT-1001|Slim Shady Capote|23|Regular|2|2|180.0|2026-11-05 16:59
-TKT-1002|shady espinosa|56|PWD|4|4|176.0|2026-11-07 16:23
+TKT-1002|ssadd|34|Regular|4|3|220.0|2026-11-08 21:36

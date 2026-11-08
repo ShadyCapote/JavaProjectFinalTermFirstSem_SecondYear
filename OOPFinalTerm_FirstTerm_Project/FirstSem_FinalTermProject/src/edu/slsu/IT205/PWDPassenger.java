@@ -6,6 +6,14 @@ package edu.slsu.IT205;
  */
 public class PWDPassenger extends DiscountedPassenger {
 
+    /**package edu.slsu.IT205;
+
+/**
+ * A passenger who is a person with disability.
+ * Gets the standard 20% discount from {@link DiscountedPassenger}.
+ */
+public class PWDPassenger extends DiscountedPassenger {
+
     /**
      * Creates a PWD passenger.
      *
@@ -25,4 +33,18 @@ public class PWDPassenger extends DiscountedPassenger {
     public String getType() {
         return "PWD";
     }
+
+    /**
+     * Returns the required ID.
+     *
+     * @return {@code "PWD ID"}
+     */
+    @Override
+    public String getRequiredId() {
+        return "PWD ID";
+    }
+}   
+public String getRequiredId() {
+    return "PWD ID";
+}
 }
