@@ -145,6 +145,8 @@ public class Ticket implements Printable {
 
     /**
      * Prints the full ticket in a box, as the passenger receives it.
+     * It shows the discount percentage of the passenger type (for example
+     * 20% for a student) above the amount paid.
      */
     @Override
     public void print() {
@@ -159,6 +161,7 @@ public class Ticket implements Printable {
         System.out.printf("| Departure : %-28s |%n", bus.getDeparture());
         System.out.printf("| Bus No.   : %-28s |%n", "Bus " + bus.getId());
         System.out.printf("| Seat No.  : %-28d |%n", seatNo);
+        System.out.printf("| Discount  : %-28s |%n", String.format("%.0f%%", passenger.getDiscountRate() * 100));
         System.out.printf("| Amount    : %-28s |%n", String.format("P%.2f", amountPaid));
         System.out.printf("| Booked on : %-28s |%n", dateBooked);
         System.out.println("+------------------------------------------+");
