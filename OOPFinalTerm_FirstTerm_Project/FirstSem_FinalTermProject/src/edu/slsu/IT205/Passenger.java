@@ -1,14 +1,10 @@
 package edu.slsu.IT205;
 
-/**
- * Abstract parent class of all passengers.
- * Subclasses decide their own type and discount (polymorphism).
- */
 public abstract class Passenger {
-    private final String name; // encapsulation: private fields
+    private final String name;
     private final int age;
 
-    protected Passenger(String name, int age) {
+    public Passenger(String name, int age) {
         this.name = name;
         this.age = age;
     }
@@ -21,24 +17,25 @@ public abstract class Passenger {
         return age;
     }
 
-    // Each subclass must define these
     public abstract String getType();
 
-    public abstract double getDiscountRate();
+    public abstract String getRequiredId();
 
-    // Shared behavior, but the result depends on the subclass's discount
-    public double computeFare(double baseFare) {
-        return baseFare * (1 - getDiscountRate());
+    public double getDiscountRate() {
+        return 0.0;
     }
 
-    /** Factory method: builds the correct Passenger subclass from a type name. */
+    public double computeFare(double baseFare) {
+        return baseFare - baseFare * getDiscountRate();
+    }
+
     public static Passenger create(String type, String name, int age) {
-        switch (type.toLowerCase()) {
-            case "student":
+        switch (type) {
+            case "Student":
                 return new StudentPassenger(name, age);
-            case "senior":
+            case "Senior":
                 return new SeniorPassenger(name, age);
-            case "pwd":
+            case "PWD":
                 return new PWDPassenger(name, age);
             default:
                 return new RegularPassenger(name, age);

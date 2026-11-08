@@ -10,4 +10,9 @@ public class SeniorPassenger extends DiscountedPassenger {
     public String getType() {
         return "Senior";
     }
+
+    @Override
+    public String getRequiredId() {
+        return "Senior Citizen ID";
+    }
 }

@@ -16,4 +16,9 @@ public class RegularPassenger extends Passenger {
     public double getDiscountRate() {
         return 0.0;
     }
+
+    @Override
+    public String getRequiredId() {
+        return "Regular ID";
+    }
 }

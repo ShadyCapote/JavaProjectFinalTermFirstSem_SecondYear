@@ -10,4 +10,9 @@ public class StudentPassenger extends DiscountedPassenger {
     public String getType() {
         return "Student";
     }
+
+    @Override
+    public String getRequiredId() {
+        return "Student ID";
+    }
 }
