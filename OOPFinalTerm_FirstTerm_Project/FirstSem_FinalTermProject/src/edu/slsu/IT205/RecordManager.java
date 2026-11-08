@@ -110,6 +110,21 @@ public class RecordManager {
     }
 
     /**
+     * Adds up the amount paid on all tickets of one bus.
+     *
+     * @param busId the id of the bus, for example {@code 1}
+     * @return the sales of that bus in pesos, or {@code 0} if the bus has no
+     *         tickets or does not exist
+     */
+    public double getSalesByBus(int busId) {
+        double total = 0;
+        for (Ticket t : getTicketsByBus(busId)) {
+            total += t.getAmountPaid();
+        }
+        return total;
+    }
+
+    /**
      * Cancels a ticket: removes it, frees its seat on the bus, and saves the
      * file. Upper and lower case do not matter.
      *
