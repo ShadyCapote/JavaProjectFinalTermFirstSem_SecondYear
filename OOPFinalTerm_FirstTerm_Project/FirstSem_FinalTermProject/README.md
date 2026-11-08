@@ -17,6 +17,27 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 
 The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
 
+## Testing
+
+The project uses JUnit 6 through the standalone console launcher in
+`lib/junit-platform-console-standalone-6.1.3.jar`. Tests are stored alongside
+the application sources under `src`.
+
+From the project root, run these commands in PowerShell:
+
+```powershell
+$junit = "lib\junit-platform-console-standalone-6.1.3.jar"
+$sources = Get-ChildItem -Path "src" -Recurse -Filter "*.java" |
+    ForEach-Object { $_.FullName }
+
+javac -cp $junit -d "bin" $sources
+java -jar $junit execute --class-path "bin" --scan-class-path
+```
+
+The second command discovers and runs all compiled JUnit tests. A successful
+run reports the number of tests found and passing; failures are listed with
+their test names and stack traces.
+
 src/
   app/         Main.java                          starts the program and connects the objects
   ui/          ConsoleMenu, LoginScreen, ConsoleInput, BusPrinter, TicketPrinter
