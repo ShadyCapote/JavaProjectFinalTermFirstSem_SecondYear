@@ -1,0 +1,7 @@
+bin/
+out/
+*.class
+tickets.txt
+sources.txt
+.idea/
+.vscode/
