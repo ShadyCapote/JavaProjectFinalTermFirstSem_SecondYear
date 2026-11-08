@@ -1,5 +1,7 @@
 package edu.slsu.IT205;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -67,6 +69,9 @@ public class BusTicketingSystem {
                         cancelTicket();
                         break;
                     case 6:
+                        viewPassengersOnBus();
+                        break;
+                    case 0:
                         System.out.println("\nLogged out.");
                         break;
                     default:
@@ -81,7 +86,7 @@ public class BusTicketingSystem {
                 // Unexpected problem: report it and return to the menu instead of crashing.
                 System.out.println("Something went wrong: " + e.getMessage());
             }
-        } while (choice != 6);
+        } while (choice != 0);
     }
 
     private void showMainMenu() {
@@ -95,7 +100,8 @@ public class BusTicketingSystem {
         System.out.println("  [3] View All Records");
         System.out.println("  [4] Search Record (by Ticket No.)");
         System.out.println("  [5] Cancel a Ticket");
-        System.out.println("  [6] Logout");
+        System.out.println("  [6] View Passengers on a Bus");
+        System.out.println("  [0] Logout");
         System.out.println("==========================================");
     }
 
@@ -152,6 +158,34 @@ public class BusTicketingSystem {
 
         System.out.println("\nBooking successful!");
         ticket.print();
+    }
+
+    private void viewPassengersOnBus() {
+        busManager.displayAll();
+        int busId = input.readInt("\nEnter Bus ID: ");
+        Bus bus = busManager.findById(busId);
+        if (bus == null) {
+            System.out.println("Bus not found.");
+            return;
+        }
+
+        List<Ticket> tickets = recordManager.getTicketsByBus(busId);
+        System.out.println("\nPassengers on " + bus.getRoute() + " (" + bus.getDeparture() + ")");
+        if (tickets.isEmpty()) {
+            System.out.println("No passengers yet.");
+            return;
+        }
+
+        tickets.sort(Comparator.comparingInt(Ticket::getSeatNo)); // lowest seat first
+        System.out.printf("%-5s %-18s %-9s %-10s %-9s%n", "Seat", "Passenger", "Type", "Ticket No", "Paid");
+        System.out.println("-------------------------------------------------------");
+        for (Ticket t : tickets) {
+            System.out.printf("%-5d %-18s %-9s %-10s P%-8.2f%n",
+                    t.getSeatNo(), t.getPassenger().getName(), t.getPassenger().getType(),
+                    t.getTicketNo(), t.getAmountPaid());
+        }
+        System.out.println("-------------------------------------------------------");
+        System.out.println(tickets.size() + " of " + bus.getCapacity() + " seats booked.");
     }
 
     private void searchRecord() {
