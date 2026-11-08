@@ -153,10 +153,31 @@ public class BusTicketingSystem {
         if (!bus.isValidSeat(seatNo)) {
             throw new BookingException("Invalid seat number.");
         }
-        if (!bus.bookSeat(seatNo)) {
+        if (bus.isSeatTaken(seatNo)) {
             throw new BookingException("Seat already taken.");
         }
 
+        // Show a summary and ask for confirmation BEFORE anything is saved
+        System.out.println("\n------------------- BOOKING SUMMARY -------------------");
+        System.out.println("Route      : " + bus.getRoute());
+        System.out.println("Departure  : " + bus.getDeparture());
+        System.out.println("Passenger  : " + passenger.getName());
+        System.out.println("Age/Type   : " + passenger.getAge() + " / " + passenger.getType());
+        System.out.println("Seat No.   : " + seatNo);
+        System.out.printf("Full fare  : P%.2f%n", bus.getFare());
+        System.out.printf("Discount   : %.0f%%%n", passenger.getDiscountRate() * 100);
+        System.out.printf("You pay    : P%.2f%n", passenger.computeFare(bus.getFare()));
+        System.out.println("--------------------------------------------------------");
+        String confirm = input.readLine("Confirm booking? (y/n): ");
+        if (!confirm.equalsIgnoreCase("y")) {
+            System.out.println("Booking cancelled. Nothing was saved.");
+            return;
+        }
+
+        // Only now is the seat reserved and the ticket saved
+        if (!bus.bookSeat(seatNo)) {
+            throw new BookingException("Seat already taken.");
+        }
         Ticket ticket = new Ticket(recordManager.nextTicketNo(), passenger, bus, seatNo);
         recordManager.add(ticket);
 
