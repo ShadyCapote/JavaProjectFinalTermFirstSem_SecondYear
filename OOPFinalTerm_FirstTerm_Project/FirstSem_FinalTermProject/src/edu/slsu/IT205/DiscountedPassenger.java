@@ -15,4 +15,21 @@ public abstract class DiscountedPassenger extends Passenger {
     public double getDiscountRate() {
         return DISCOUNT_RATE;
     }
+
+    /**
+     * Applies the discount to a base fare.
+     *
+     * @param baseFare the full fare before discount
+     * @return the fare after the discount
+     */
+    public double applyDiscount(double baseFare) {
+        return baseFare * (1 - DISCOUNT_RATE);
+    }
+
+    /**
+     * Gives the ID a discounted passenger must show when boarding,
+     * for example "Student ID" or "Senior Citizen ID".
+     * Each subclass says which one it needs.
+     */
+    public abstract String getRequiredId();
 }
