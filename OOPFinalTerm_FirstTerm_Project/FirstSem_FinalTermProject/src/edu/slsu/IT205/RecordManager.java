@@ -71,6 +71,45 @@ public class RecordManager {
     }
 
     /**
+     * Finds all tickets whose passenger name contains the given text.
+     * Upper and lower case do not matter, so {@code "juan"} finds
+     * {@code "Juan Dela Cruz"}. A blank search finds nothing.
+     *
+     * @param name the name, or part of a name, to look for
+     * @return the matching tickets in booking order; an empty list if none match
+     */
+    public List<Ticket> findByPassengerName(String name) {
+        List<Ticket> found = new ArrayList<>();
+        if (name == null || name.trim().isEmpty())
+            return found;
+
+        String search = name.trim().toLowerCase();
+        for (Ticket t : tickets) {
+            if (t.getPassenger().getName().toLowerCase().contains(search)) {
+                found.add(t);
+            }
+        }
+        return found;
+    }
+
+    /**
+     * Finds all tickets booked on one bus.
+     *
+     * @param busId the id of the bus, for example {@code 1}
+     * @return the tickets for that bus in booking order; an empty list if the
+     *         bus has no tickets or does not exist
+     */
+    public List<Ticket> getTicketsByBus(int busId) {
+        List<Ticket> found = new ArrayList<>();
+        for (Ticket t : tickets) {
+            if (t.getBus().getId() == busId) {
+                found.add(t);
+            }
+        }
+        return found;
+    }
+
+    /**
      * Cancels a ticket: removes it, frees its seat on the bus, and saves the
      * file. Upper and lower case do not matter.
      *
