@@ -282,3 +282,61 @@ The project covers the main bus ticketing flow, from login to booking, searching
 
 ### License
 See the [LICENSE](LICENSE) file.
+
+
+## FAQ
+
+**How do I run the program?**
+From the project folder:
+
+```
+javac -d out src/edu/slsu/IT205/*.java
+java -cp out edu.slsu.IT205.BusTicketingSystem
+```
+
+In an IDE such as NetBeans, Eclipse, IntelliJ or VS Code, run the `BusTicketingSystem` class.
+
+**What are the login accounts?**
+
+| Username | Password | Role |
+|----------|----------|------|
+| admin | admin123 | Admin |
+| cashier | cashier123 | Cashier |
+
+The username is not case sensitive, but the password is.
+
+**Why did the program close after I typed the wrong password?**
+After 3 wrong attempts the program closes for safety. Start it again and log in with the correct password.
+
+**How do I quit?**
+Type `exit` as the username on the login screen. Option `[6] Logout` in the main menu takes you back to the login screen.
+
+**What is the difference between Admin and Cashier?**
+Both can view buses, book tickets, view all records and search for a ticket. Only an Admin can cancel a ticket. A Cashier who chooses Cancel sees `Access denied. Only an Admin can cancel tickets.`
+
+**How much is the discount?**
+Students, Seniors and PWD passengers get 20% off the full fare. Regular passengers pay the full fare. For example, on a P200.00 bus a student pays P160.00. The printed ticket shows the discount percentage and the amount paid. Discounted passengers are expected to show a valid ID when boarding.
+
+**Why can't I choose a seat?**
+Taken seats show `XX` on the seat map. Choose a seat number that is still free, from 1 to 20.
+
+**Why was my age rejected?**
+The age must be a whole number from 1 to 120. The program shows a message and returns to the main menu. Nothing is saved until the ticket is printed, so start the booking again with option 2.
+
+**Where are the tickets saved?**
+In `tickets.txt`, one ticket per line, with the fields separated by `|`. The program reads the file when it starts, so your tickets are still there next time. If you type a `|` in a passenger name, it is replaced by a space so it cannot break the file.
+
+**How do I clear all tickets?**
+Close the program and delete `tickets.txt`. This cannot be undone. The program starts again with no tickets.
+
+**Can I search with lowercase letters?**
+Yes. `tkt-1001` and `TKT-1001` both find the same ticket.
+
+**Can I cancel a ticket?**
+Yes, as an Admin, with option 5. The program asks you to confirm with `y`, and cancelling frees the seat so it can be booked again.
+
+**Where can I learn more?**
+- [User guide](docs/USER_GUIDE.md): every screen and what to type
+- [Sample run](docs/SAMPLE_RUN.md): an example session
+- [Architecture](docs/ARCHITECTURE.md): the classes and how they fit together
+- [OOP concepts](docs/OOP_CONCEPTS.md): where encapsulation, inheritance, polymorphism and abstraction are used
