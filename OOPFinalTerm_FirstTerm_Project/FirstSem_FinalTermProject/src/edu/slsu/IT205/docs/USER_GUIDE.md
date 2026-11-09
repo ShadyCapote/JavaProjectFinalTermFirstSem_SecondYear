@@ -42,7 +42,9 @@ After logging in you see the main menu. It always shows who is logged in.
   [3] View All Records
   [4] Search Record (by Ticket No.)
   [5] Cancel a Ticket
-  [6] Logout
+  [6] View Passengers on a Bus
+  [7] Sales Summary per Route (Admin only)
+  [8] Logout
 ==========================================
 Enter choice:
 
