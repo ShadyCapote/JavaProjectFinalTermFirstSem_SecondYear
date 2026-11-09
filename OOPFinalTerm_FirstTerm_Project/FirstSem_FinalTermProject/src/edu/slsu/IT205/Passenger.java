@@ -70,6 +70,13 @@ public abstract class Passenger {
     public abstract String getType();
 
     /**
+     * Returns the ID the passenger must show to get this fare.
+     *
+     * @return the name of the ID, for example {@code "Student ID"}
+     */
+    public abstract String getRequiredId();
+
+    /**
      * Returns the discount rate of this passenger type.
      *
      * @return the discount as a fraction, for example {@code 0.20} for 20%
