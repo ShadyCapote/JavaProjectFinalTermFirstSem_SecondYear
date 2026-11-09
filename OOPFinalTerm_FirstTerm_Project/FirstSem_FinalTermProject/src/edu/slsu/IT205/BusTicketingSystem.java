@@ -156,7 +156,7 @@ public class BusTicketingSystem {
                     + bus.getCapacity() + ".");
         }
         if (bus.isSeatTaken(seatNo)) {
-            throw new BookingException("Seat already taken.");
+            throw new BookingException(seatTakenMessage(bus, seatNo));
         }
 
         // Show a summary and ask for confirmation BEFORE anything is saved
@@ -178,7 +178,7 @@ public class BusTicketingSystem {
 
         // Only now is the seat reserved and the ticket saved
         if (!bus.bookSeat(seatNo)) {
-            throw new BookingException("Seat already taken.");
+            throw new BookingException(seatTakenMessage(bus, seatNo));
         }
         Ticket ticket = new Ticket(recordManager.nextTicketNo(), passenger, bus, seatNo);
         recordManager.add(ticket);
@@ -242,6 +242,24 @@ public class BusTicketingSystem {
     /** Returns true if the logged-in user is an Admin. */
     private boolean isAdmin() {
         return "Admin".equals(currentUser.getRole());
+    }
+
+    /**
+     * Builds the message for a seat that is already taken, listing the seats that
+     * are still free.
+     */
+    private String seatTakenMessage(Bus bus, int seatNo) {
+        List<Integer> free = bus.getFreeSeats();
+        if (free.isEmpty()) {
+            return "Seat " + seatNo + " is already taken. This bus has no free seats left.";
+        }
+        StringBuilder list = new StringBuilder();
+        for (int seat : free) {
+            if (list.length() > 0)
+                list.append(", ");
+            list.append(seat);
+        }
+        return "Seat " + seatNo + " is already taken. Free seats: " + list + ".";
     }
 
     private void searchRecord() {

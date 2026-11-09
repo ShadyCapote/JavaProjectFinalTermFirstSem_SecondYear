@@ -2,6 +2,8 @@ package edu.slsu.IT205;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -157,5 +159,54 @@ class BusTest {
         bus.releaseSeat(3);
         assertFalse(bus.isFull());
         assertEquals(1, bus.availableSeats());
+    }
+
+    // ---------- free seats ----------
+
+    @Test
+    void aNewBusHasEverySeatFree() {
+        assertEquals(Arrays.asList(1, 2, 3, 4), bus.getFreeSeats());
+    }
+
+    @Test
+    void aBookedSeatIsNotInTheFreeList() {
+        bus.bookSeat(2);
+        assertEquals(Arrays.asList(1, 3, 4), bus.getFreeSeats());
+    }
+
+    @Test
+    void theFreeSeatsAreInSeatOrder() {
+        bus.bookSeat(3);
+        bus.bookSeat(1);
+        assertEquals(Arrays.asList(2, 4), bus.getFreeSeats());
+    }
+
+    @Test
+    void aReleasedSeatIsInTheFreeListAgain() {
+        bus.bookSeat(2);
+        bus.releaseSeat(2);
+        assertTrue(bus.getFreeSeats().contains(2));
+    }
+
+    @Test
+    void aFullBusHasNoFreeSeats() {
+        for (int seat = 1; seat <= 4; seat++)
+            bus.bookSeat(seat);
+        assertTrue(bus.getFreeSeats().isEmpty());
+    }
+
+    @Test
+    void theNumberOfFreeSeatsMatchesAvailableSeats() {
+        bus.bookSeat(1);
+        bus.bookSeat(4);
+        assertEquals(bus.availableSeats(), bus.getFreeSeats().size());
+    }
+
+    @Test
+    void changingTheReturnedListDoesNotChangeTheBus() {
+        List<Integer> free = bus.getFreeSeats();
+        free.clear();
+        assertEquals(4, bus.availableSeats());
+        assertFalse(bus.isSeatTaken(1));
     }
 }

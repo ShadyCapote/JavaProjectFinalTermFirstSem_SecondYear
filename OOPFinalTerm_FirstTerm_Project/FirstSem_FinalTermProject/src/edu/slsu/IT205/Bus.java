@@ -1,5 +1,8 @@
 package edu.slsu.IT205;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents one bus trip with its own seats.
  * <p>
@@ -174,6 +177,21 @@ public class Bus implements Printable {
             if (!taken)
                 count++;
         return count;
+    }
+
+    /**
+     * Lists the seats that are still free, lowest number first.
+     * Changing the returned list does not change the bus.
+     *
+     * @return a new list of the free seat numbers; empty if the bus is full
+     */
+    public List<Integer> getFreeSeats() {
+        List<Integer> free = new ArrayList<>();
+        for (int seat = 1; seat <= seats.length; seat++) {
+            if (!seats[seat - 1])
+                free.add(seat);
+        }
+        return free;
     }
 
     /**
