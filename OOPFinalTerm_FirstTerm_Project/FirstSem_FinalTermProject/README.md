@@ -283,6 +283,96 @@ The project covers the main bus ticketing flow, from login to booking, searching
 ### License
 See the [LICENSE](LICENSE) file.
 
+## How to Run
+
+### Requirements
+
+- A JDK (Java Development Kit), version 8 or newer. Version 17 or 21 is recommended. A JRE alone cannot compile the code.
+- A terminal, or an IDE such as VS Code, NetBeans, IntelliJ or Eclipse.
+
+Check that Java is installed. Both commands should print a version:
+
+```
+java -version
+javac -version
+```
+
+If either says it is not recognized, install a JDK (for example Eclipse Temurin or Microsoft Build of OpenJDK), set `JAVA_HOME` to its folder, and add its `bin` folder to your PATH. Then close and reopen the terminal.
+
+### Option 1: Windows terminal (PowerShell or Command Prompt)
+
+1. Open the terminal in the project folder, the one that contains `src`. In File Explorer you can type `cmd` or `powershell` in the address bar, or use `cd`:
+
+   ```
+   cd C:\path\to\BusTicketingSystem
+   ```
+
+2. Compile:
+
+   ```
+   javac -d out src/edu/slsu/IT205/*.java
+   ```
+
+   If PowerShell does not accept the `*`, use this instead:
+
+   ```
+   javac -d out (Get-ChildItem src -Recurse -Filter *.java).FullName
+   ```
+
+3. Run:
+
+   ```
+   java -cp out edu.slsu.IT205.BusTicketingSystem
+   ```
+
+The login screen appears. Use `admin` / `admin123` or `cashier` / `cashier123`.
+
+Compile again after you change any `.java` file.
+
+### Option 2: VS Code
+
+1. Install a JDK, then install the **Extension Pack for Java** from the Extensions view (Ctrl+Shift+X).
+2. Open the project folder (File > Open Folder), the one that contains `src`.
+3. Open `src/edu/slsu/IT205/BusTicketingSystem.java`.
+4. Click **Run** above the `main` method, or press Ctrl+F5.
+5. Type your input in the **Terminal** panel at the bottom.
+
+If you cannot type into the program, the output is going to the Debug Console, which does not accept input. Add this to `.vscode/settings.json` and run again:
+
+```json
+{
+  "java.debug.settings.console": "integratedTerminal"
+}
+```
+
+If VS Code reports a wrong package or cannot find the other classes, add `"java.project.sourcePaths": ["src"]` to the same file.
+
+### Option 3: NetBeans
+
+1. Choose File > New Project > Java with Ant > **Java Project with Existing Sources**.
+2. Pick the project folder, then add the `src` folder as the source package folder.
+3. Right-click `BusTicketingSystem.java` and choose **Run File** (Shift+F6).
+4. Type your input in the **Output** window at the bottom.
+
+### Option 4: IntelliJ IDEA
+
+1. Choose File > New > **Project from Existing Sources** and select the project folder.
+2. Right-click the `src` folder, choose Mark Directory as > **Sources Root**.
+3. Open `BusTicketingSystem.java` and click the green arrow next to `main`, then **Run**.
+4. Type your input in the **Run** window at the bottom.
+
+### Option 5: Eclipse
+
+1. Choose File > New > **Java Project** and clear "Use default location", then pick the project folder. (Or create the project and copy the `src` folder in.)
+2. Right-click `BusTicketingSystem.java` and choose Run As > **Java Application**.
+3. Click inside the **Console** view and type your input there.
+
+### Good to know
+
+- Start the program from the project folder, or from the project root in your IDE. The `tickets.txt` file is saved in the folder the program starts in, so starting it somewhere else shows a new, empty record list.
+- Some IDE consoles show the password as you type. A normal terminal hides it.
+- The menus and tables are aligned for a window at least 80 characters wide, with a monospaced font.
+- If something does not work, see [Troubleshooting](#troubleshooting).
 
 ## FAQ
 
