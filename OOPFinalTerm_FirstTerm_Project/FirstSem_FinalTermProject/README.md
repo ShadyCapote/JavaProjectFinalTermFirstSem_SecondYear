@@ -340,3 +340,43 @@ Yes, as an Admin, with option 5. The program asks you to confirm with `y`, and c
 - [Sample run](docs/SAMPLE_RUN.md): an example session
 - [Architecture](docs/ARCHITECTURE.md): the classes and how they fit together
 - [OOP concepts](docs/OOP_CONCEPTS.md): where encapsulation, inheritance, polymorphism and abstraction are used
+
+## Troubleshooting
+
+### Build and run problems
+
+**`'javac' is not recognized` (or `The term 'javac' is not recognized` in PowerShell)**
+Java is missing, or it is not on your PATH. `javac` comes with the JDK, so a JRE alone is not enough.
+1. Run `java -version` and `javac -version`. Both should print a version.
+2. If not, install a JDK, set `JAVA_HOME` to its folder, and add its `bin` folder to your PATH.
+3. Close and reopen the terminal, then try again.
+
+**`Error: Could not find or load main class edu.slsu.IT205.BusTicketingSystem`**
+- Run the commands from the project folder, the one that contains `src`.
+- Compile first. The `out` folder must exist and contain the compiled classes.
+- Use the full class name with dots, not slashes: `edu.slsu.IT205.BusTicketingSystem`.
+- The `-cp out` part must be there.
+
+**`javac` says `file not found: src/edu/slsu/IT205/*.java` (or the `*` is not expanded)**
+Some terminals do not expand the `*`. In PowerShell, compile with:
+
+```
+javac -d out (Get-ChildItem src -Recurse -Filter *.java).FullName
+```
+
+**`error: package org.junit.jupiter.api does not exist`**
+A test file such as `TicketTest.java` is inside `src`, and plain `javac` has no JUnit. Either move the tests to a separate `test` folder, or leave them out of the build:
+
+```
+javac -d out (Get-ChildItem src -Recurse -Filter *.java | Where-Object { $_.Name -notlike '*Test.java' }).FullName
+```
+
+**`UnsupportedClassVersionError`**
+The classes were compiled with a newer JDK than the one running them. Use the same JDK for `javac` and `java`. `java -version` and `javac -version` should show the same major version.
+
+**`'mvn' is not recognized`**
+Maven is not installed or not on your PATH. You do not need Maven to run this program. To run the tests, use your IDE's test runner, or install Maven and add its `bin` folder to your PATH.
+
+### Compile errors after editing
+
+**`class X is public, should be declared in a file named X.java`,
