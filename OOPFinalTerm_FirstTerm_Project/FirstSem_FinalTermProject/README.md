@@ -274,11 +274,41 @@ The project covers the main bus ticketing flow, from login to booking, searching
 - It is a console app with no graphical interface
 - No payment processing
 
-### Future improvements
-- Cancel or change a ticket
-- A seat map for each bus
-- Daily and monthly sales reports
-- A graphical interface
+## Future Improvements
+
+These are ideas for making the system more complete. They are grouped by area.
+
+### Booking
+
+- **Travel date.** A ticket only records when it was booked, and a bus shows one set of free seats. Letting the passenger choose a travel date would give each bus its own seats for each day.
+- **Change a seat.** Move an existing ticket to another free seat without cancelling and booking again.
+- **Record the ID number.** Discounted passengers must show a valid ID when boarding. The program could ask for the ID number and print it on the ticket.
+- **Payment and change.** Ask for the amount handed over, then show the change.
+- **Refund amount on cancel.** Show how much is returned when a ticket is cancelled.
+
+### Management
+
+- **Manage buses from the menu.** Let an Admin add a bus, change a fare, or remove a bus that has no tickets, and save the buses in a file.
+- **Manage staff accounts.** Let an Admin create and remove Cashier accounts instead of using the two built-in ones.
+- **Activity log.** Record who booked or cancelled each ticket and when.
+
+### Reports
+
+- **Sales reports.** Show sales per route, per day and per month, not only the total.
+- **Passenger type summary.** Count how many Regular, Student, Senior and PWD tickets were sold.
+- **Export.** Save the records as a CSV file that opens in Excel, or print a ticket to PDF.
+
+### Security
+
+- **Hashed passwords.** Store a hash of each password instead of the plain text.
+- **Stronger login rules.** Require a minimum password length and let users change their own password.
+
+### Technical
+
+- **Database.** Replace `tickets.txt` with a database such as SQLite or MySQL using JDBC, so records can be searched and updated safely.
+- **Graphical interface.** Build a JavaFX or Swing version, or a web version, on the same passenger, bus and ticket classes.
+- **Automated tests and CI.** Add JUnit tests and a GitHub Actions workflow that compiles the project and runs the tests on every push.
+- **Better input checks.** Re-ask when a letter is typed where a number is expected, instead of returning to the menu.
 
 ### License
 See the [LICENSE](LICENSE) file.
