@@ -123,15 +123,15 @@ public class BusTicketingSystem {
             throw new BookingException("Bus not found.");
         }
         if (bus.isFull()) {
-            throw new BookingException("Sorry, this bus is already full.");
+            throw new BookingException("This bus is already full.");
         }
 
-        String name = input.readLine("Passenger name: ");
+        String name = input.readLine("Enter passenger name: ");
         if (name.isEmpty()) {
             throw new BookingException("Name cannot be empty.");
         }
 
-        int age = input.readInt("Age: ");
+        int age = input.readInt("Enter age: ");
         if (age < MIN_AGE || age > MAX_AGE) {
             throw new BookingException("Invalid age.");
         }
@@ -175,7 +175,7 @@ public class BusTicketingSystem {
         System.out.println("--------------------------------------------------------");
         String confirm = input.readLine("Confirm booking? (y/n): ");
         if (!confirm.equalsIgnoreCase("y")) {
-            System.out.println("Booking cancelled. Nothing was saved.");
+            System.out.println("Booking aborted. Nothing was saved.");
             return;
         }
 
@@ -186,7 +186,7 @@ public class BusTicketingSystem {
         Ticket ticket = new Ticket(recordManager.nextTicketNo(), passenger, bus, seatNo);
         recordManager.add(ticket);
 
-        System.out.println("\nBooking successful!");
+        System.out.println("\nBooking successful.");
         ticket.print();
     }
 
@@ -200,9 +200,10 @@ public class BusTicketingSystem {
         }
 
         List<Ticket> tickets = recordManager.getTicketsByBus(busId);
-        System.out.println("\nPassengers on " + bus.getRoute() + " (" + bus.getDeparture() + ")");
+        System.out.println("\n----------------- PASSENGERS ON BUS -----------------");
+        System.out.println("Bus " + bus.getId() + ": " + bus.getRoute() + " (" + bus.getDeparture() + ")");
         if (tickets.isEmpty()) {
-            System.out.println("No passengers yet.");
+            System.out.println("No passengers found.");
             return;
         }
 
@@ -273,7 +274,7 @@ public class BusTicketingSystem {
             recordManager.cancel(ticketNo);
             System.out.println("Ticket cancelled.");
         } else {
-            System.out.println("Cancellation aborted.");
+            System.out.println("Cancellation aborted. The ticket was kept.");
         }
     }
 }

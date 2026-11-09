@@ -52,10 +52,10 @@ public class LogIn {
             String username;
             String password;
             try {
-                username = input.readLine("Username (type 'exit' to quit): ");
+                username = input.readLine("Enter username (type 'exit' to quit): ");
                 if (username.equalsIgnoreCase("exit"))
                     return null;
-                password = input.readPassword("Password: ");
+                password = input.readPassword("Enter password: ");
             } catch (NoSuchElementException e) {
                 // The keyboard input was closed (Ctrl+D / Ctrl+Z),
                 // so nothing more can be read. Leave the login politely.
