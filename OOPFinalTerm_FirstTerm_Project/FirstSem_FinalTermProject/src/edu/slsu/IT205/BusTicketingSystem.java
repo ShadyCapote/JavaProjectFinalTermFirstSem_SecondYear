@@ -152,7 +152,8 @@ public class BusTicketingSystem {
         bus.showSeatMap();
         int seatNo = input.readInt("Choose seat number (1-" + bus.getCapacity() + "): ");
         if (!bus.isValidSeat(seatNo)) {
-            throw new BookingException("Invalid seat number.");
+            throw new BookingException("Invalid seat number. Please choose a seat from 1 to "
+                    + bus.getCapacity() + ".");
         }
         if (bus.isSeatTaken(seatNo)) {
             throw new BookingException("Seat already taken.");

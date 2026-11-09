@@ -28,7 +28,8 @@ public class Ticket implements Printable {
      * @param ticketNo  the ticket number, for example {@code "TKT-1001"}
      * @param passenger the passenger who bought the ticket
      * @param bus       the bus being booked
-     * @param seatNo    the seat number, starting at 1
+     * @param seatNo    the seat number, from 1 up to the capacity of the bus
+     * @throws IllegalArgumentException if the seat number does not exist on the bus
      */
     public Ticket(String ticketNo, Passenger passenger, Bus bus, int seatNo) {
         this(ticketNo, passenger, bus, seatNo,
@@ -43,12 +44,16 @@ public class Ticket implements Printable {
      * @param ticketNo   the ticket number
      * @param passenger  the passenger who bought the ticket
      * @param bus        the bus that was booked
-     * @param seatNo     the seat number, starting at 1
+     * @param seatNo     the seat number, from 1 up to the capacity of the bus
      * @param amountPaid the amount that was paid, in pesos
      * @param dateBooked the booking date and time as text
+     * @throws IllegalArgumentException if the seat number does not exist on the bus
      */
     public Ticket(String ticketNo, Passenger passenger, Bus bus, int seatNo,
             double amountPaid, String dateBooked) {
+        if (!bus.isValidSeat(seatNo)) {
+            throw new IllegalArgumentException("Seat number must be from 1 to " + bus.getCapacity() + ".");
+        }
         this.ticketNo = ticketNo;
         this.passenger = passenger;
         this.bus = bus;

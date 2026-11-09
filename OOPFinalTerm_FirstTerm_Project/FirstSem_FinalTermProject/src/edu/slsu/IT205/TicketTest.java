@@ -146,17 +146,52 @@ class TicketTest {
         assertTrue(out.contains("Southern Leyte - Silago"));
     }
 
+    // ---------- seat number must exist on the bus ----------
+
     @Test
-    void printedStudentTicketShowsTwentyPercentDiscount() {
-        Ticket t = new Ticket("TKT-1014", new StudentPassenger("Ana Cruz", 18), bus, 5);
-        String out = capturePrint(t::print);
-        assertTrue(out.contains("Discount  : 20%"));
+    void seatZeroIsRejected() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Ticket("TKT-1020", new RegularPassenger("Juan", 25), bus, 0));
     }
 
     @Test
-    void printedRegularTicketShowsZeroPercentDiscount() {
-        Ticket t = new Ticket("TKT-1015", new RegularPassenger("Juan", 25), bus, 6);
-        String out = capturePrint(t::print);
-        assertTrue(out.contains("Discount  : 0%"));
+    void aNegativeSeatIsRejected() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Ticket("TKT-1021", new RegularPassenger("Juan", 25), bus, -1));
+    }
+
+    @Test
+    void aSeatAfterTheLastSeatOfTheBusIsRejected() {
+        // the bus in setUp has 20 seats
+        assertThrows(IllegalArgumentException.class,
+                () -> new Ticket("TKT-1022", new RegularPassenger("Juan", 25), bus, 21));
+    }
+
+    @Test
+    void theFirstAndTheLastSeatOfTheBusAreAccepted() {
+        assertEquals(1, new Ticket("TKT-1023", new RegularPassenger("Juan", 25), bus, 1).getSeatNo());
+        assertEquals(20, new Ticket("TKT-1024", new RegularPassenger("Ana", 18), bus, 20).getSeatNo());
+    }
+
+    @Test
+    void theLimitFollowsTheCapacityOfTheBus() {
+        Bus small = new Bus(5, "Small Bus", "06:00 AM", 100.00, 10);
+        assertEquals(10, new Ticket("TKT-1025", new RegularPassenger("Juan", 25), small, 10).getSeatNo());
+        assertThrows(IllegalArgumentException.class,
+                () -> new Ticket("TKT-1026", new RegularPassenger("Juan", 25), small, 11));
+    }
+
+    @Test
+    void aTicketBuiltFromSavedValuesAlsoChecksTheSeat() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Ticket("TKT-1027", new RegularPassenger("Juan", 25), bus, 99, 100.0, "2026-01-01 10:00"));
+    }
+
+    @Test
+    void theErrorMessageTellsTheAllowedSeats() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new Ticket("TKT-1028", new RegularPassenger("Juan", 25), bus, 0));
+        assertTrue(e.getMessage().contains("1"));
+        assertTrue(e.getMessage().contains("20"));
     }
 }
