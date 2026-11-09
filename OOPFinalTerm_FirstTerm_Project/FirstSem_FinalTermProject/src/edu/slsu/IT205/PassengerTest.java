@@ -79,4 +79,52 @@ class PassengerTest {
         assertEquals("Maria", p.getName());
         assertEquals(19, p.getAge());
     }
+
+    // ---------- blank names ----------
+
+    @Test
+    void anEmptyNameIsRejected() {
+        assertThrows(IllegalArgumentException.class, () -> new RegularPassenger("", 25));
+    }
+
+    @Test
+    void aNameOfOnlySpacesIsRejected() {
+        assertThrows(IllegalArgumentException.class, () -> new RegularPassenger("   ", 25));
+        assertThrows(IllegalArgumentException.class, () -> new RegularPassenger("\t", 25));
+    }
+
+    @Test
+    void aNullNameIsRejected() {
+        assertThrows(IllegalArgumentException.class, () -> new RegularPassenger(null, 25));
+    }
+
+    @Test
+    void everyPassengerTypeRejectsABlankName() {
+        assertThrows(IllegalArgumentException.class, () -> new StudentPassenger(" ", 18));
+        assertThrows(IllegalArgumentException.class, () -> new SeniorPassenger(" ", 70));
+        assertThrows(IllegalArgumentException.class, () -> new PWDPassenger(" ", 30));
+    }
+
+    @Test
+    void theFactoryRejectsABlankName() {
+        assertThrows(IllegalArgumentException.class, () -> Passenger.create("Student", "", 20));
+        assertThrows(IllegalArgumentException.class, () -> Passenger.create("Regular", "  ", 20));
+    }
+
+    @Test
+    void theErrorMessageSaysThatTheNameIsEmpty() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new RegularPassenger("", 25));
+        assertTrue(e.getMessage().contains("name"));
+    }
+
+    @Test
+    void aNameWithSpacesInsideIsAccepted() {
+        assertEquals("Juan Dela Cruz", new RegularPassenger("Juan Dela Cruz", 25).getName());
+    }
+
+    @Test
+    void aOneLetterNameIsAccepted() {
+        assertEquals("J", new RegularPassenger("J", 25).getName());
+    }
 }
