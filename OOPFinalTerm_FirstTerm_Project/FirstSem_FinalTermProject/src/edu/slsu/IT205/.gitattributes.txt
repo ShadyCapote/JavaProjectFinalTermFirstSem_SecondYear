@@ -1,19 +1,23 @@
-# Let Git normalize line endings for text files
+
+@"
+# Let Git manage line endings for text files, so Windows, Mac and Linux
+# do not fight over them. Text files are stored with LF in the repository.
 * text=auto
 
-# Java source and docs are stored with LF
-*.java text eol=lf
-*.md text eol=lf
-*.xml text eol=lf
-*.yml text eol=lf
+# Source code and documents are always text
+*.java text
+*.md   text
+*.txt  text
 
-# Windows scripts need CRLF, shell scripts need LF
+# Windows scripts must keep CRLF
 *.bat text eol=crlf
-*.sh text eol=lf
+*.cmd text eol=crlf
 
-# Never touch binary files
-*.png binary
-*.jpg binary
-*.pdf binary
-*.jar binary
+# Binary files are never changed
 *.class binary
+*.jar   binary
+*.png   binary
+*.jpg   binary
+*.gif   binary
+*.pdf   binary
+"@ | Set-Content -Encoding ascii .gitattributes
