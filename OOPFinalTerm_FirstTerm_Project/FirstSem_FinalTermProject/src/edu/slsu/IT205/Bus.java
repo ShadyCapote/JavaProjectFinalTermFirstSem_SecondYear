@@ -12,6 +12,9 @@ package edu.slsu.IT205;
  * @see BusManager
  */
 public class Bus implements Printable {
+    /** How many seats are shown in one row of the seat map. */
+    private static final int SEATS_PER_ROW = 4;
+
     private final int id;
     private final String route;
     private final String departure;
@@ -183,14 +186,14 @@ public class Bus implements Printable {
     }
 
     /**
-     * Prints the seat map to the console, four seats per row.
+     * Prints the seat map to the console, with a fixed number of seats per row.
      * Free seats show their number and taken seats show {@code XX}.
      */
     public void showSeatMap() {
         System.out.println("\nSeat Map (XX = taken)");
         for (int i = 0; i < seats.length; i++) {
             System.out.print(seats[i] ? " XX " : String.format(" %02d ", i + 1));
-            if ((i + 1) % 4 == 0)
+            if ((i + 1) % SEATS_PER_ROW == 0)
                 System.out.println();
         }
         System.out.println();
