@@ -241,3 +241,44 @@ classDiagram
 | `o--` | has a collection of, for example BusManager has many Buses |
 | `-->` | uses or holds a reference to |
 | `..>` | depends on, here catching the exception |
+
+
+## Features
+
+- Book bus tickets with a chosen bus and seat number
+- Four passenger types: Regular, Student, Senior and PWD. Student, Senior and PWD get 20% off
+- Printed ticket shows the discount percentage and the amount paid
+- Asks for confirmation before a booking is saved
+- Search tickets by passenger name
+- View all passengers on a bus
+- Sales summary per route (Admin only)
+- Login with roles, so Admin and Staff see different menus
+- Records are saved in `tickets.txt` and loaded again when the program starts
+- Unit tests with JUnit 5 for passengers, buses, tickets and records
+
+## Final notes
+
+### Project status
+The project covers the main bus ticketing flow, from login to booking, searching and reporting. The commit history shows it built one small step at a time.
+
+### What I learned
+- Inheritance: `Student`, `Senior` and `PWD` extend `DiscountedPassenger`, which extends `Passenger`
+- Abstraction: abstract methods such as `getType()` and `getRequiredId()`
+- Polymorphism: `Ticket` works with any `Passenger` type
+- Encapsulation: private fields with getters
+- File handling: `|`-separated lines saved and loaded
+- Unit testing: Arrange, Act, Assert with JUnit 5
+
+### Known limitations
+- Data is saved in plain text files, not a database
+- It is a console app with no graphical interface
+- No payment processing
+
+### Future improvements
+- Cancel or change a ticket
+- A seat map for each bus
+- Daily and monthly sales reports
+- A graphical interface
+
+### License
+See the [LICENSE](LICENSE) file.
