@@ -127,4 +127,50 @@ class PassengerTest {
     void aOneLetterNameIsAccepted() {
         assertEquals("J", new RegularPassenger("J", 25).getName());
     }
+
+    // ---------- extra spaces in names ----------
+
+    @Test
+    void spacesAtTheStartAndTheEndOfTheNameAreRemoved() {
+        assertEquals("Juan", new RegularPassenger("  Juan  ", 25).getName());
+    }
+
+    @Test
+    void severalSpacesInARowBecomeOneSpace() {
+        assertEquals("Juan Dela Cruz", new RegularPassenger("Juan     Dela    Cruz", 25).getName());
+    }
+
+    @Test
+    void tabsBetweenWordsBecomeOneSpace() {
+        assertEquals("Juan Dela", new RegularPassenger("Juan\tDela", 25).getName());
+    }
+
+    @Test
+    void spacesAtTheEndsAndInTheMiddleAreCleanedTogether() {
+        assertEquals("Maria Clara Santos", new RegularPassenger("   Maria   Clara  Santos   ", 30).getName());
+    }
+
+    @Test
+    void everyPassengerTypeCleansTheName() {
+        assertEquals("Ana Cruz", new StudentPassenger("  Ana   Cruz ", 18).getName());
+        assertEquals("Lola Rosa", new SeniorPassenger("  Lola   Rosa ", 70).getName());
+        assertEquals("Ben Reyes", new PWDPassenger("  Ben   Reyes ", 30).getName());
+    }
+
+    @Test
+    void theFactoryCleansTheName() {
+        assertEquals("Juan Dela Cruz", Passenger.create("Student", "  Juan   Dela  Cruz ", 20).getName());
+    }
+
+    @Test
+    void aNameThatIsAlreadyCleanIsNotChanged() {
+        assertEquals("Juan Dela Cruz", new RegularPassenger("Juan Dela Cruz", 25).getName());
+    }
+
+    @Test
+    void cleaningTheNameDoesNotChangeTheAgeOrTheType() {
+        Passenger p = new StudentPassenger("  Ana   Cruz ", 18);
+        assertEquals(18, p.getAge());
+        assertEquals("Student", p.getType());
+    }
 }

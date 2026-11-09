@@ -16,6 +16,8 @@ public abstract class Passenger {
 
     /**
      * Creates a passenger. Only subclasses can call this constructor.
+     * Extra spaces in the name are removed: spaces at the start and the end
+     * are dropped, and several spaces (or tabs) in a row become one space.
      *
      * @param name the passenger's full name
      * @param age  the passenger's age in years
@@ -26,12 +28,12 @@ public abstract class Passenger {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Passenger name cannot be empty.");
         }
-        this.name = name;
+        this.name = name.trim().replaceAll("\\s+", " ");
         this.age = age;
     }
 
     /**
-     * Returns the passenger's name.
+     * Returns the passenger's name, without extra spaces.
      *
      * @return the full name
      */
