@@ -173,4 +173,59 @@ class PassengerTest {
         assertEquals(18, p.getAge());
         assertEquals("Student", p.getType());
     }
+
+    // ---------- age range ----------
+
+    @Test
+    void theYoungestAndTheOldestAllowedAgesAreAccepted() {
+        assertEquals(Passenger.MIN_AGE, new RegularPassenger("Baby", Passenger.MIN_AGE).getAge());
+        assertEquals(Passenger.MAX_AGE, new RegularPassenger("Elder", Passenger.MAX_AGE).getAge());
+    }
+
+    @Test
+    void anAgeBelowTheMinimumIsRejected() {
+        assertThrows(IllegalArgumentException.class, () -> new RegularPassenger("Juan", Passenger.MIN_AGE - 1));
+        assertThrows(IllegalArgumentException.class, () -> new RegularPassenger("Juan", 0));
+        assertThrows(IllegalArgumentException.class, () -> new RegularPassenger("Juan", -5));
+    }
+
+    @Test
+    void anAgeAboveTheMaximumIsRejected() {
+        assertThrows(IllegalArgumentException.class, () -> new RegularPassenger("Juan", Passenger.MAX_AGE + 1));
+        assertThrows(IllegalArgumentException.class, () -> new RegularPassenger("Juan", 500));
+    }
+
+    @Test
+    void everyPassengerTypeRejectsAnAgeOutsideTheRange() {
+        assertThrows(IllegalArgumentException.class, () -> new StudentPassenger("Ana", 0));
+        assertThrows(IllegalArgumentException.class, () -> new SeniorPassenger("Lola", 121));
+        assertThrows(IllegalArgumentException.class, () -> new PWDPassenger("Ben", -1));
+    }
+
+    @Test
+    void theFactoryRejectsAnAgeOutsideTheRange() {
+        assertThrows(IllegalArgumentException.class, () -> Passenger.create("Student", "Ana", 0));
+        assertThrows(IllegalArgumentException.class, () -> Passenger.create("Regular", "Juan", 121));
+    }
+
+    @Test
+    void theErrorMessageTellsTheAllowedRange() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new RegularPassenger("Juan", 0));
+        assertTrue(e.getMessage().contains(String.valueOf(Passenger.MIN_AGE)));
+        assertTrue(e.getMessage().contains(String.valueOf(Passenger.MAX_AGE)));
+    }
+
+    @Test
+    void theAllowedRangeIsOneTo120() {
+        assertEquals(1, Passenger.MIN_AGE);
+        assertEquals(120, Passenger.MAX_AGE);
+    }
+
+    @Test
+    void aBlankNameIsStillRejectedBeforeTheAgeIsLookedAt() {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> new RegularPassenger("", 500));
+        assertTrue(e.getMessage().contains("name"));
+    }
 }

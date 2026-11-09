@@ -19,11 +19,6 @@ import java.util.NoSuchElementException;
  * java edu.slsu.IT205.BusTicketingSystem
  */
 public class BusTicketingSystem {
-    /** The youngest age accepted when booking a ticket. */
-    private static final int MIN_AGE = 1;
-    /** The oldest age accepted when booking a ticket. */
-    private static final int MAX_AGE = 120;
-
     private final BusManager busManager = new BusManager();
     private final RecordManager recordManager = new RecordManager("tickets.txt", busManager);
     private final ConsoleInput input = new ConsoleInput();
@@ -132,8 +127,9 @@ public class BusTicketingSystem {
         }
 
         int age = input.readInt("Enter age: ");
-        if (age < MIN_AGE || age > MAX_AGE) {
-            throw new BookingException("Invalid age.");
+        if (age < Passenger.MIN_AGE || age > Passenger.MAX_AGE) {
+            throw new BookingException("Invalid age. Please enter an age from "
+                    + Passenger.MIN_AGE + " to " + Passenger.MAX_AGE + ".");
         }
 
         System.out.println("Passenger type: [1] Regular  [2] Student  [3] Senior  [4] PWD");

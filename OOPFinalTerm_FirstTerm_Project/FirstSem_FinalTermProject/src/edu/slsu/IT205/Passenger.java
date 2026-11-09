@@ -11,6 +11,12 @@ package edu.slsu.IT205;
  * @see DiscountedPassenger
  */
 public abstract class Passenger {
+    /** The youngest age accepted for a passenger. */
+    public static final int MIN_AGE = 1;
+
+    /** The oldest age accepted for a passenger. */
+    public static final int MAX_AGE = 120;
+
     private final String name; // encapsulation: private fields
     private final int age;
 
@@ -20,13 +26,19 @@ public abstract class Passenger {
      * are dropped, and several spaces (or tabs) in a row become one space.
      *
      * @param name the passenger's full name
-     * @param age  the passenger's age in years
+     * @param age  the passenger's age in years, from {@link #MIN_AGE} to
+     *             {@link #MAX_AGE}
      * @throws IllegalArgumentException if the name is {@code null}, empty,
-     *                                  or contains only spaces
+     *                                  or contains only spaces, or if the age
+     *                                  is outside {@link #MIN_AGE} to
+     *                                  {@link #MAX_AGE}
      */
     protected Passenger(String name, int age) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Passenger name cannot be empty.");
+        }
+        if (age < MIN_AGE || age > MAX_AGE) {
+            throw new IllegalArgumentException("Age must be from " + MIN_AGE + " to " + MAX_AGE + ".");
         }
         this.name = name.trim().replaceAll("\\s+", " ");
         this.age = age;
@@ -82,10 +94,13 @@ public abstract class Passenger {
      *
      * @param type "student", "senior", "pwd", or anything else for regular
      * @param name the passenger's full name
-     * @param age  the passenger's age in years
+     * @param age  the passenger's age in years, from {@link #MIN_AGE} to
+     *             {@link #MAX_AGE}
      * @return a new passenger of the matching subclass
      * @throws IllegalArgumentException if the name is {@code null}, empty,
-     *                                  or contains only spaces
+     *                                  or contains only spaces, or if the age
+     *                                  is outside {@link #MIN_AGE} to
+     *                                  {@link #MAX_AGE}
      */
     public static Passenger create(String type, String name, int age) {
         switch (type.toLowerCase()) {
