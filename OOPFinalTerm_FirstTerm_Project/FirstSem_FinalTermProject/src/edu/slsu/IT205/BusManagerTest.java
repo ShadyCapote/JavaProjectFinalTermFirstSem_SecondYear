@@ -76,7 +76,7 @@ class BusManagerTest {
     void newBusesStartWithAllSeatsFree() {
         for (int id = 1; id <= 4; id++) {
             Bus bus = manager.findById(id);
-            assertEquals(bus.getCapacity(), bus.availableSeats());
+            assertEquals(bus.getCapacity(), bus.getAvailableSeats());
         }
     }
 

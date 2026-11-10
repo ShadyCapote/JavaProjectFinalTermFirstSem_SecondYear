@@ -25,7 +25,7 @@ class BusTest {
     @Test
     void newBusHasAllSeatsFree() {
         assertEquals(4, bus.getCapacity());
-        assertEquals(4, bus.availableSeats());
+        assertEquals(4, bus.getAvailableSeats());
         assertFalse(bus.isFull());
     }
 
@@ -68,7 +68,7 @@ class BusTest {
     void bookingASeatMarksItTaken() {
         assertTrue(bus.bookSeat(2));
         assertTrue(bus.isSeatTaken(2));
-        assertEquals(3, bus.availableSeats());
+        assertEquals(3, bus.getAvailableSeats());
     }
 
     @Test
@@ -83,14 +83,14 @@ class BusTest {
     void cannotBookTheSameSeatTwice() {
         assertTrue(bus.bookSeat(3));
         assertFalse(bus.bookSeat(3));
-        assertEquals(3, bus.availableSeats());
+        assertEquals(3, bus.getAvailableSeats());
     }
 
     @Test
     void firstAndLastSeatCanBeBooked() {
         assertTrue(bus.bookSeat(1));
         assertTrue(bus.bookSeat(4));
-        assertEquals(2, bus.availableSeats());
+        assertEquals(2, bus.getAvailableSeats());
     }
 
     // ---------- invalid seat numbers ----------
@@ -108,7 +108,7 @@ class BusTest {
     void invalidSeatNumbersCannotBeBooked() {
         assertFalse(bus.bookSeat(0));
         assertFalse(bus.bookSeat(5));
-        assertEquals(4, bus.availableSeats());
+        assertEquals(4, bus.getAvailableSeats());
     }
 
     @Test
@@ -124,7 +124,7 @@ class BusTest {
         bus.bookSeat(1);
         bus.releaseSeat(1);
         assertFalse(bus.isSeatTaken(1));
-        assertEquals(4, bus.availableSeats());
+        assertEquals(4, bus.getAvailableSeats());
     }
 
     @Test
@@ -139,7 +139,7 @@ class BusTest {
         bus.bookSeat(1);
         bus.releaseSeat(0);
         bus.releaseSeat(99);
-        assertEquals(3, bus.availableSeats());
+        assertEquals(3, bus.getAvailableSeats());
     }
 
     // ---------- full bus ----------
@@ -149,7 +149,7 @@ class BusTest {
         for (int seat = 1; seat <= 4; seat++)
             bus.bookSeat(seat);
         assertTrue(bus.isFull());
-        assertEquals(0, bus.availableSeats());
+        assertEquals(0, bus.getAvailableSeats());
     }
 
     @Test
@@ -158,7 +158,7 @@ class BusTest {
             bus.bookSeat(seat);
         bus.releaseSeat(3);
         assertFalse(bus.isFull());
-        assertEquals(1, bus.availableSeats());
+        assertEquals(1, bus.getAvailableSeats());
     }
 
     // ---------- free seats ----------
@@ -199,14 +199,14 @@ class BusTest {
     void theNumberOfFreeSeatsMatchesAvailableSeats() {
         bus.bookSeat(1);
         bus.bookSeat(4);
-        assertEquals(bus.availableSeats(), bus.getFreeSeats().size());
+        assertEquals(bus.getAvailableSeats(), bus.getFreeSeats().size());
     }
 
     @Test
     void changingTheReturnedListDoesNotChangeTheBus() {
         List<Integer> free = bus.getFreeSeats();
         free.clear();
-        assertEquals(4, bus.availableSeats());
+        assertEquals(4, bus.getAvailableSeats());
         assertFalse(bus.isSeatTaken(1));
     }
 }

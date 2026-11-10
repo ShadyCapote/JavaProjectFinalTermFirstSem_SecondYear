@@ -171,7 +171,7 @@ public class Bus implements Printable {
      *
      * @return the number of seats that are not taken
      */
-    public int availableSeats() {
+    public int getAvailableSeats() {
         int count = 0;
         for (boolean taken : seats)
             if (!taken)
@@ -200,7 +200,7 @@ public class Bus implements Printable {
      * @return {@code true} if there are no free seats left
      */
     public boolean isFull() {
-        return availableSeats() == 0;
+        return getAvailableSeats() == 0;
     }
 
     /**
@@ -235,6 +235,6 @@ public class Bus implements Printable {
     @Override
     public void print() {
         System.out.printf("%-4d %-27s %-10s P%-9.2f %d/%d%n",
-                id, route, departure, fare, availableSeats(), seats.length);
+                id, route, departure, fare, getAvailableSeats(), seats.length);
     }
 }
