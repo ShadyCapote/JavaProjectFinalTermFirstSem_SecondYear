@@ -281,4 +281,114 @@ class RecordManagerTest {
         assertNotNull(reloaded.findByNo("TKT-1001"));
         assertNull(reloaded.findByNo("TKT-1002"));
     }
+
+    // ---------- files that cannot be saved or read ----------
+
+    /** A file inside a folder that does not exist, so every save must fail. */
+    private RecordManager managerThatCannotSave() {
+        String missingFolder = tempDir.resolve("no-such-folder").resolve("tickets.txt").toString();
+        return new RecordManager(missingFolder, new BusManager());
+    }
+
+    /** Returns the text that follows "Reason: " on the same line. */
+    private String reasonShownIn(String printed) {
+        int start = printed.indexOf("Reason: ");
+        assertTrue(start >= 0, "the message should have a Reason");
+        return printed.substring(start + "Reason: ".length()).split("\\R")[0];
+    }
+
+    private Ticket anyTicket() {
+        return new Ticket("TKT-1001", new RegularPassenger("Juan", 25), busManager.findById(1), 5);
+    }
+
+    @Test
+    void aFriendlyMessageIsShownWhenTheFileCannotBeSaved() {
+        RecordManager broken = managerThatCannotSave();
+
+        String out = capturePrint(() -> broken.add(anyTicket()));
+
+        assertTrue(out.contains("Warning: Could not save the tickets to"));
+        assertTrue(out.contains("tickets.txt"));
+        assertTrue(out.contains("kept only until you close the program"));
+    }
+
+    @Test
+    void theReasonIsShownInPlainWordsWithoutRepeatingTheFileName() {
+        RecordManager broken = managerThatCannotSave();
+
+        String out = capturePrint(() -> broken.add(anyTicket()));
+
+        String reason = reasonShownIn(out);
+        assertFalse(reason.isEmpty());
+        assertFalse(reason.contains("tickets.txt")); // the file name is already in the first part
+        assertFalse(reason.contains("no-such-folder")); // and so is the path
+        assertFalse(reason.contains("("));
+    }
+
+    @Test
+    void theSaveMessageDoesNotShowATechnicalExceptionName() {
+        RecordManager broken = managerThatCannotSave();
+
+        String out = capturePrint(() -> broken.add(anyTicket()));
+
+        assertFalse(out.contains("Exception"));
+        assertFalse(out.contains("\tat "));
+    }
+
+    @Test
+    void theTicketIsStillKeptInMemoryAfterASaveError() {
+        RecordManager broken = managerThatCannotSave();
+        capturePrint(() -> broken.add(anyTicket()));
+
+        assertNotNull(broken.findByNo("TKT-1001"));
+        assertEquals(200.0, broken.getTotalSales(), 0.001); // bus 1 fare; the program keeps working
+    }
+
+    @Test
+    void cancellingAlsoShowsTheMessageWhenSavingFails() {
+        RecordManager broken = managerThatCannotSave();
+        capturePrint(() -> broken.add(anyTicket()));
+
+        String out = capturePrint(() -> broken.cancel("TKT-1001"));
+
+        assertTrue(out.contains("Warning: Could not save the tickets to"));
+        assertNull(broken.findByNo("TKT-1001"));
+    }
+
+    @Test
+    void noWarningIsShownWhenSavingWorks() {
+        String out = capturePrint(() -> records.add(anyTicket()));
+        assertFalse(out.contains("Warning"));
+    }
+
+    @Test
+    void aFriendlyMessageIsShownWhenTheFileCannotBeRead() throws IOException {
+        Files.createDirectory(file); // a folder named tickets.txt cannot be read as a file
+
+        String out = capturePrint(() -> new RecordManager(fileName, new BusManager()));
+
+        assertTrue(out.contains("Warning: Could not read the saved tickets from"));
+        assertTrue(out.contains("may be missing"));
+        assertFalse(reasonShownIn(out).contains("tickets.txt"));
+        assertFalse(out.contains("Exception"));
+    }
+
+    @Test
+    void theProgramStartsWithNoTicketsWhenTheFileCannotBeRead() throws IOException {
+        Files.createDirectory(file);
+        RecordManager unreadable = new RecordManager(fileName, new BusManager());
+
+        assertEquals(0.0, unreadable.getTotalSales(), 0.001);
+        assertNull(unreadable.findByNo("TKT-1001"));
+    }
+
+    @Test
+    void theSavedFileHasTheSameLinesAsBefore() throws IOException {
+        records.add(anyTicket());
+
+        List<String> lines = Files.readAllLines(file);
+        assertEquals(1, lines.size());
+        assertEquals(anyTicket().toFileLine().split("\\|")[0], lines.get(0).split("\\|")[0]);
+        assertTrue(lines.get(0).startsWith("TKT-1001|Juan|25|Regular|1|5|"));
+    }
 }

@@ -1,11 +1,11 @@
 package edu.slsu.IT205;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -69,8 +69,7 @@ public class RecordManager {
      */
     public Ticket findByNo(String ticketNo) {
         for (Ticket t : tickets) {
-            if (t.getTicketNo().equalsIgnoreCase(ticketNo))
-                return t;
+            if (t.getTicketNo().equalsIgnoreCase(ticketNo)) return t;
         }
         return null;
     }
@@ -85,8 +84,7 @@ public class RecordManager {
      */
     public List<Ticket> findByPassengerName(String name) {
         List<Ticket> found = new ArrayList<>();
-        if (name == null || name.trim().isEmpty())
-            return found;
+        if (name == null || name.trim().isEmpty()) return found;
 
         String search = name.trim().toLowerCase();
         for (Ticket t : tickets) {
@@ -158,8 +156,7 @@ public class RecordManager {
      */
     public double getTotalSales() {
         double total = 0;
-        for (Ticket t : tickets)
-            total += t.getAmountPaid();
+        for (Ticket t : tickets) total += t.getAmountPaid();
         return total;
     }
 
@@ -187,15 +184,38 @@ public class RecordManager {
 
     /**
      * Writes all tickets to the file, one per line. If the file cannot be
-     * written, an error message is printed and the program keeps running.
+     * written (the folder is missing, the file is open in another program,
+     * the disk is full...), a friendly warning is printed and the program keeps
+     * running with the tickets it has in memory.
+     * A BufferedWriter is used because, unlike a PrintWriter, it reports every
+     * write problem as an IOException.
      */
     private void save() {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(fileName))) {
-            for (Ticket t : tickets)
-                pw.println(t.toFileLine());
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            for (Ticket t : tickets) {
+                writer.write(t.toFileLine());
+                writer.newLine();
+            }
         } catch (IOException e) {
-            System.out.println("Error saving records: " + e.getMessage());
+            System.out.println("Warning: Could not save the tickets to " + fileName + ". Reason: " + reasonOf(e));
+            System.out.println("Your changes are kept only until you close the program. "
+                    + "Check that the file is not open in another program and that its folder can be written to.");
         }
+    }
+
+    /**
+     * Gets the reason of a file problem in plain words. Java often writes it as
+     * {@code "tickets.txt (Access is denied)"}; only the part in brackets is
+     * kept, so the file name is not shown twice.
+     */
+    private static String reasonOf(IOException e) {
+        String message = e.getMessage();
+        if (message == null || message.isEmpty()) return "unknown problem";
+        int open = message.lastIndexOf('(');
+        if (message.endsWith(")") && open >= 0) {
+            return message.substring(open + 1, message.length() - 1);
+        }
+        return message;
     }
 
     /**
@@ -205,23 +225,22 @@ public class RecordManager {
      */
     private void load() {
         File file = new File(fileName);
-        if (!file.exists())
-            return;
+        if (!file.exists()) return;
 
         int skipped = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty())
-                    continue;
+                if (line.trim().isEmpty()) continue;
                 try {
                     loadLine(line);
                 } catch (RuntimeException e) {
-                    skipped++; // NumberFormatException, ArrayIndexOutOfBounds, IllegalArgument...
+                    skipped++;   // NumberFormatException, ArrayIndexOutOfBounds, IllegalArgument...
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error loading records: " + e.getMessage());
+            System.out.println("Warning: Could not read the saved tickets from " + fileName + ". Reason: " + reasonOf(e));
+            System.out.println("Some or all of the saved tickets may be missing.");
         }
 
         if (skipped > 0) {
@@ -237,17 +256,14 @@ public class RecordManager {
         // 1) read and check everything first...
         Passenger passenger = Passenger.create(p[3], p[1], Integer.parseInt(p[2]));
         Bus bus = busManager.findById(Integer.parseInt(p[4]));
-        if (bus == null)
-            throw new IllegalArgumentException("Unknown bus");
+        if (bus == null) throw new IllegalArgumentException("Unknown bus");
         int seatNo = Integer.parseInt(p[5]);
         double amount = Double.parseDouble(p[6]);
         int number = Integer.parseInt(p[0].replace("TKT-", ""));
 
         // 2) ...and only then change any state
-        if (!bus.bookSeat(seatNo))
-            throw new IllegalArgumentException("Bad or duplicate seat");
+        if (!bus.bookSeat(seatNo)) throw new IllegalArgumentException("Bad or duplicate seat");
         tickets.add(new Ticket(p[0], passenger, bus, seatNo, amount, p[7]));
-        if (number > ticketCounter)
-            ticketCounter = number;
+        if (number > ticketCounter) ticketCounter = number;
     }
 }
