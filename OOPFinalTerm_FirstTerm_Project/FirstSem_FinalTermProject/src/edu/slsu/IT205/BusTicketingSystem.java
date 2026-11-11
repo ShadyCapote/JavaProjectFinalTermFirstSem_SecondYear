@@ -269,6 +269,8 @@ public class BusTicketingSystem {
         System.out.println("--------------------------------------------------------");
         System.out.printf("%-4s %-27s %-8d P%-9.2f%n", "", "TOTAL",
                 totalTickets, recordManager.getTotalSales());
+
+        pressEnterToContinue();
     }
 
     /** Returns true if the logged-in user is an Admin. */
@@ -324,4 +326,10 @@ public class BusTicketingSystem {
             System.out.println("Cancellation aborted. The ticket was kept.");
         }
     }
+
+    private void pressEnterToContinue() {
+        System.out.print("\nPress Enter to continue...");
+        input.readLine("");
+    }
+
 }
