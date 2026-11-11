@@ -25,6 +25,22 @@ public class BusTicketingSystem {
     private final LogIn login = new LogIn(input);
     private User currentUser;
 
+    private void displayWelcomeBanner() {
+        System.out.println();
+        System.out.println("======================================================");
+        System.out.println("                                                      ");
+        System.out.println("             WELCOME TO OUR BUS TERMINAL              ");
+        System.out.println("                                                      ");
+        System.out.println("                  BUS TICKETING SYSTEM                ");
+        System.out.println("                                                      ");
+        System.out.println("             Your Journey, Our Priority!              ");
+        System.out.println("                                                      ");
+        System.out.println("======================================================");
+        System.out.println("          BUS RESERVATION & MANAGEMENT SYSTEM         ");
+        System.out.println("======================================================");
+        System.out.println();
+    }
+
     public static void main(String[] args) {
         try {
             new BusTicketingSystem().run();
@@ -37,12 +53,18 @@ public class BusTicketingSystem {
     // ===================== PROGRAM FLOW =====================
 
     public void run() {
+
+        displayWelcomeBanner();
+
         while (true) {
-            currentUser = login.start(); // null = exit / too many attempts
+            currentUser = login.start();
+
             if (currentUser == null)
                 break;
-            runMenu(); // returns when the user logs out
+
+            runMenu();
         }
+
         System.out.println("\nThank you for using the Bus Ticketing System. Goodbye!");
     }
 
