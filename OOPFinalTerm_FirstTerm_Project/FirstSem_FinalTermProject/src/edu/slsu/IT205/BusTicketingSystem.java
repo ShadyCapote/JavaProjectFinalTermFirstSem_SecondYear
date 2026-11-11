@@ -115,11 +115,20 @@ public class BusTicketingSystem {
     }
 
     private void showMainMenu() {
-        System.out.println("\n==========================================");
-        System.out.println("        BUS TICKETING SYSTEM");
-        System.out.println("  Logged in as: " + currentUser.getUsername()
-                + " (" + currentUser.getRole() + ")");
-        System.out.println("==========================================");
+
+        System.out.println("\n==================================================");
+        System.out.println("               BUS TICKETING SYSTEM");
+        System.out.println("==================================================");
+
+        // Logged-in user information
+        System.out.println("  LOGGED-IN USER INFORMATION");
+        System.out.println("  Username : " + currentUser.getUsername());
+        System.out.println("  Role     : " + currentUser.getRole());
+
+        System.out.println("--------------------------------------------------");
+        System.out.println("                    MAIN MENU");
+        System.out.println("--------------------------------------------------");
+
         System.out.println("  [1] View Available Buses");
         System.out.println("  [2] Book a Ticket");
         System.out.println("  [3] View All Records");
@@ -128,7 +137,8 @@ public class BusTicketingSystem {
         System.out.println("  [6] View Passengers on a Bus");
         System.out.println("  [7] Sales Summary per Route (Admin only)");
         System.out.println("  [0] Logout");
-        System.out.println("==========================================");
+
+        System.out.println("==================================================");
     }
 
     // ===================== ACTIONS =====================
