@@ -144,8 +144,29 @@ public class BusTicketingSystem {
     // ===================== ACTIONS =====================
 
     private void bookTicket() throws BookingException {
-        busManager.displayAll();
-        Bus bus = busManager.findById(input.readInt("\nEnter Bus ID: "));
+
+        System.out.println("\n============== SELECT YOUR BUS ==============");
+
+        List<Bus> buses = busManager.getBuses();
+
+        for (int i = 0; i < buses.size(); i++) {
+            Bus b = buses.get(i);
+
+            System.out.println("[" + (i + 1) + "] " + b.getRoute());
+            System.out.println("    Departure : " + b.getDeparture());
+            System.out.printf("    Fare      : P%.2f%n", b.getFare());
+            System.out.println("    Bus ID    : " + b.getId());
+            System.out.println("---------------------------------------------");
+        }
+
+        int choice = input.readInt("Select bus number: ");
+
+        if (choice < 1 || choice > buses.size()) {
+            throw new BookingException("Invalid bus selection.");
+        }
+
+        Bus bus = buses.get(choice - 1);
+
         if (bus == null) {
             throw new BookingException("Bus not found.");
         }
