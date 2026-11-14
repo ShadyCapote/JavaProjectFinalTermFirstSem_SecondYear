@@ -21,6 +21,9 @@ import java.util.List;
  * @see BusManager
  */
 public class RecordManager {
+    /** The friendly sentence shown when no ticket has been booked yet. */
+    public static final String NO_TICKETS_MESSAGE = "No tickets have been booked yet.";
+
     private final List<Ticket> tickets = new ArrayList<>();
     private final String fileName;
     private final BusManager busManager;
@@ -69,7 +72,8 @@ public class RecordManager {
      */
     public Ticket findByNo(String ticketNo) {
         for (Ticket t : tickets) {
-            if (t.getTicketNo().equalsIgnoreCase(ticketNo)) return t;
+            if (t.getTicketNo().equalsIgnoreCase(ticketNo))
+                return t;
         }
         return null;
     }
@@ -84,7 +88,8 @@ public class RecordManager {
      */
     public List<Ticket> findByPassengerName(String name) {
         List<Ticket> found = new ArrayList<>();
-        if (name == null || name.trim().isEmpty()) return found;
+        if (name == null || name.trim().isEmpty())
+            return found;
 
         String search = name.trim().toLowerCase();
         for (Ticket t : tickets) {
@@ -150,23 +155,33 @@ public class RecordManager {
     }
 
     /**
+     * Checks whether there are no tickets at all.
+     *
+     * @return {@code true} if no ticket has been booked yet
+     */
+    public boolean isEmpty() {
+        return tickets.isEmpty();
+    }
+
+    /**
      * Adds up the amount paid on all tickets.
      *
      * @return the total sales in pesos, or {@code 0} if there are no tickets
      */
     public double getTotalSales() {
         double total = 0;
-        for (Ticket t : tickets) total += t.getAmountPaid();
+        for (Ticket t : tickets)
+            total += t.getAmountPaid();
         return total;
     }
 
     /**
      * Prints all tickets as a table, followed by the number of tickets and
-     * the total sales. Prints "No records found." if there are no tickets.
+     * the total sales. Prints {@link #NO_TICKETS_MESSAGE} if there are no tickets.
      */
     public void displayAll() {
         if (tickets.isEmpty()) {
-            System.out.println("\nNo records found.");
+            System.out.println("\n" + NO_TICKETS_MESSAGE);
             return;
         }
         System.out.println("\n------------------------------ ALL RECORDS ------------------------------");
@@ -210,7 +225,8 @@ public class RecordManager {
      */
     private static String reasonOf(IOException e) {
         String message = e.getMessage();
-        if (message == null || message.isEmpty()) return "unknown problem";
+        if (message == null || message.isEmpty())
+            return "unknown problem";
         int open = message.lastIndexOf('(');
         if (message.endsWith(")") && open >= 0) {
             return message.substring(open + 1, message.length() - 1);
@@ -225,21 +241,24 @@ public class RecordManager {
      */
     private void load() {
         File file = new File(fileName);
-        if (!file.exists()) return;
+        if (!file.exists())
+            return;
 
         int skipped = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
+                if (line.trim().isEmpty())
+                    continue;
                 try {
                     loadLine(line);
                 } catch (RuntimeException e) {
-                    skipped++;   // NumberFormatException, ArrayIndexOutOfBounds, IllegalArgument...
+                    skipped++; // NumberFormatException, ArrayIndexOutOfBounds, IllegalArgument...
                 }
             }
         } catch (IOException e) {
-            System.out.println("Warning: Could not read the saved tickets from " + fileName + ". Reason: " + reasonOf(e));
+            System.out
+                    .println("Warning: Could not read the saved tickets from " + fileName + ". Reason: " + reasonOf(e));
             System.out.println("Some or all of the saved tickets may be missing.");
         }
 
@@ -256,14 +275,17 @@ public class RecordManager {
         // 1) read and check everything first...
         Passenger passenger = Passenger.create(p[3], p[1], Integer.parseInt(p[2]));
         Bus bus = busManager.findById(Integer.parseInt(p[4]));
-        if (bus == null) throw new IllegalArgumentException("Unknown bus");
+        if (bus == null)
+            throw new IllegalArgumentException("Unknown bus");
         int seatNo = Integer.parseInt(p[5]);
         double amount = Double.parseDouble(p[6]);
         int number = Integer.parseInt(p[0].replace("TKT-", ""));
 
         // 2) ...and only then change any state
-        if (!bus.bookSeat(seatNo)) throw new IllegalArgumentException("Bad or duplicate seat");
+        if (!bus.bookSeat(seatNo))
+            throw new IllegalArgumentException("Bad or duplicate seat");
         tickets.add(new Ticket(p[0], passenger, bus, seatNo, amount, p[7]));
-        if (number > ticketCounter) ticketCounter = number;
+        if (number > ticketCounter)
+            ticketCounter = number;
     }
 }

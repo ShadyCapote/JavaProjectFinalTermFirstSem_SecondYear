@@ -25,22 +25,6 @@ public class BusTicketingSystem {
     private final LogIn login = new LogIn(input);
     private User currentUser;
 
-    private void displayWelcomeBanner() {
-        System.out.println();
-        System.out.println("======================================================");
-        System.out.println("                                                      ");
-        System.out.println("             WELCOME TO OUR BUS TERMINAL              ");
-        System.out.println("                                                      ");
-        System.out.println("                  BUS TICKETING SYSTEM                ");
-        System.out.println("                                                      ");
-        System.out.println("             Your Journey, Our Priority!              ");
-        System.out.println("                                                      ");
-        System.out.println("======================================================");
-        System.out.println("          BUS RESERVATION & MANAGEMENT SYSTEM         ");
-        System.out.println("======================================================");
-        System.out.println();
-    }
-
     public static void main(String[] args) {
         try {
             new BusTicketingSystem().run();
@@ -54,17 +38,12 @@ public class BusTicketingSystem {
 
     public void run() {
 
-        displayWelcomeBanner();
-
         while (true) {
-            currentUser = login.start();
-
+            currentUser = login.start(); // null = exit / too many attempts
             if (currentUser == null)
                 break;
-
-            runMenu();
+            runMenu(); // returns when the user logs out
         }
-
         System.out.println("\nThank you for using the Bus Ticketing System. Goodbye!");
     }
 
@@ -82,7 +61,7 @@ public class BusTicketingSystem {
                         bookTicket();
                         break;
                     case 3:
-                        recordManager.displayAll();
+                        viewAllRecords();
                         break;
                     case 4:
                         searchRecord();
@@ -95,6 +74,9 @@ public class BusTicketingSystem {
                         break;
                     case 7:
                         viewSalesSummary();
+                        break;
+                    case 8:
+                        viewSeatMap();
                         break;
                     case 0:
                         System.out.println("\nLogged out.");
@@ -115,20 +97,11 @@ public class BusTicketingSystem {
     }
 
     private void showMainMenu() {
-
-        System.out.println("\n==================================================");
-        System.out.println("               BUS TICKETING SYSTEM");
-        System.out.println("==================================================");
-
-        // Logged-in user information
-        System.out.println("  LOGGED-IN USER INFORMATION");
-        System.out.println("  Username : " + currentUser.getUsername());
-        System.out.println("  Role     : " + currentUser.getRole());
-
-        System.out.println("--------------------------------------------------");
-        System.out.println("                    MAIN MENU");
-        System.out.println("--------------------------------------------------");
-
+        System.out.println("\n==========================================");
+        System.out.println("        BUS TICKETING SYSTEM");
+        System.out.println("  Logged in as: " + currentUser.getUsername()
+                + " (" + currentUser.getRole() + ")");
+        System.out.println("==========================================");
         System.out.println("  [1] View Available Buses");
         System.out.println("  [2] Book a Ticket");
         System.out.println("  [3] View All Records");
@@ -136,37 +109,16 @@ public class BusTicketingSystem {
         System.out.println("  [5] Cancel a Ticket");
         System.out.println("  [6] View Passengers on a Bus");
         System.out.println("  [7] Sales Summary per Route (Admin only)");
+        System.out.println("  [8] View Seat Map of a Bus");
         System.out.println("  [0] Logout");
-
-        System.out.println("==================================================");
+        System.out.println("==========================================");
     }
 
     // ===================== ACTIONS =====================
 
     private void bookTicket() throws BookingException {
-
-        System.out.println("\n============== SELECT YOUR BUS ==============");
-
-        List<Bus> buses = busManager.getBuses();
-
-        for (int i = 0; i < buses.size(); i++) {
-            Bus b = buses.get(i);
-
-            System.out.println("[" + (i + 1) + "] " + b.getRoute());
-            System.out.println("    Departure : " + b.getDeparture());
-            System.out.printf("    Fare      : P%.2f%n", b.getFare());
-            System.out.println("    Bus ID    : " + b.getId());
-            System.out.println("---------------------------------------------");
-        }
-
-        int choice = input.readInt("Select bus number: ");
-
-        if (choice < 1 || choice > buses.size()) {
-            throw new BookingException("Invalid bus selection.");
-        }
-
-        Bus bus = buses.get(choice - 1);
-
+        busManager.displayAll();
+        Bus bus = busManager.findById(input.readInt("\nEnter Bus ID: "));
         if (bus == null) {
             throw new BookingException("Bus not found.");
         }
@@ -269,12 +221,24 @@ public class BusTicketingSystem {
         System.out.println(tickets.size() + " of " + bus.getCapacity() + " seats booked.");
     }
 
+    private void viewSeatMap() {
+        busManager.displayAll();
+        Bus bus = busManager.findById(input.readInt("\nEnter Bus ID: "));
+        if (bus == null) {
+            System.out.println("Bus not found.");
+            return;
+        }
+        bus.showSeatMap();
+    }
+
     private void viewSalesSummary() {
         // Only an Admin may see the sales
         if (!isAdmin()) {
             System.out.println("\nAccess denied. Only an Admin can view the sales summary.");
             return;
         }
+        if (showNoTicketsYet())
+            return;
 
         System.out.println("\n----------------- SALES SUMMARY PER ROUTE -----------------");
         System.out.printf("%-4s %-27s %-8s %-10s%n", "ID", "Route", "Tickets", "Sales");
@@ -290,8 +254,6 @@ public class BusTicketingSystem {
         System.out.println("--------------------------------------------------------");
         System.out.printf("%-4s %-27s %-8d P%-9.2f%n", "", "TOTAL",
                 totalTickets, recordManager.getTotalSales());
-
-        pressEnterToContinue();
     }
 
     /** Returns true if the logged-in user is an Admin. */
@@ -317,7 +279,28 @@ public class BusTicketingSystem {
         return "Seat " + seatNo + " is already taken. Free seats: " + list + ".";
     }
 
+    /**
+     * Shows a friendly message when nothing has been booked yet.
+     *
+     * @return {@code true} if there are no tickets (the message was shown)
+     */
+    private boolean showNoTicketsYet() {
+        if (!recordManager.isEmpty())
+            return false;
+        System.out.println("\n" + RecordManager.NO_TICKETS_MESSAGE);
+        System.out.println("Choose [2] Book a Ticket to add the first one.");
+        return true;
+    }
+
+    private void viewAllRecords() {
+        if (showNoTicketsYet())
+            return;
+        recordManager.displayAll();
+    }
+
     private void searchRecord() {
+        if (showNoTicketsYet())
+            return;
         Ticket ticket = recordManager.findByNo(input.readLine("\nEnter Ticket No. (e.g. TKT-1001): "));
         if (ticket == null) {
             System.out.println("Ticket not found.");
@@ -332,6 +315,8 @@ public class BusTicketingSystem {
             System.out.println("\nAccess denied. Only an Admin can cancel tickets.");
             return;
         }
+        if (showNoTicketsYet())
+            return;
 
         String ticketNo = input.readLine("\nEnter Ticket No. to cancel: ");
         Ticket ticket = recordManager.findByNo(ticketNo);
@@ -347,10 +332,4 @@ public class BusTicketingSystem {
             System.out.println("Cancellation aborted. The ticket was kept.");
         }
     }
-
-    private void pressEnterToContinue() {
-        System.out.print("\nPress Enter to continue...");
-        input.readLine("");
-    }
-
 }

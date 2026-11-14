@@ -51,6 +51,15 @@ class RecordManagerTest {
         return new RecordManager(fileName, new BusManager());
     }
 
+    /**
+     * Runs something that also prints, hides the printing, and returns the result.
+     */
+    private RecordManager capturePrintAndReturn(java.util.function.Supplier<RecordManager> action) {
+        RecordManager[] result = new RecordManager[1];
+        capturePrint(() -> result[0] = action.get());
+        return result[0];
+    }
+
     private String capturePrint(Runnable action) {
         PrintStream original = System.out;
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -137,7 +146,51 @@ class RecordManagerTest {
     @Test
     void displayAllSaysSoWhenThereAreNoTickets() {
         String out = capturePrint(records::displayAll);
-        assertTrue(out.contains("No records found."));
+        assertTrue(out.contains(RecordManager.NO_TICKETS_MESSAGE));
+    }
+
+    @Test
+    void theFriendlyMessageSaysThatNoTicketsHaveBeenBookedYet() {
+        assertEquals("No tickets have been booked yet.", RecordManager.NO_TICKETS_MESSAGE);
+    }
+
+    @Test
+    void theFriendlyMessageIsNotShownWhenThereAreTickets() {
+        bookTicket(new RegularPassenger("Juan", 25), busManager.findById(1), 5);
+        String out = capturePrint(records::displayAll);
+        assertFalse(out.contains(RecordManager.NO_TICKETS_MESSAGE));
+    }
+
+    // ---------- isEmpty ----------
+
+    @Test
+    void isEmptyIsTrueWhenNoTicketHasBeenBooked() {
+        assertTrue(records.isEmpty());
+    }
+
+    @Test
+    void isEmptyIsFalseAfterATicketIsAdded() {
+        bookTicket(new RegularPassenger("Juan", 25), busManager.findById(1), 5);
+        assertFalse(records.isEmpty());
+    }
+
+    @Test
+    void isEmptyIsTrueAgainAfterTheLastTicketIsCancelled() {
+        Ticket t = bookTicket(new RegularPassenger("Juan", 25), busManager.findById(1), 5);
+        records.cancel(t.getTicketNo());
+        assertTrue(records.isEmpty());
+    }
+
+    @Test
+    void isEmptyIsFalseForTicketsLoadedFromTheFile() {
+        bookTicket(new RegularPassenger("Juan", 25), busManager.findById(1), 5);
+        assertFalse(reopen().isEmpty());
+    }
+
+    @Test
+    void isEmptyIsTrueWhenEveryLineOfTheFileIsDamaged() throws IOException {
+        Files.write(file, Arrays.asList("garbage line", "TKT-1007|Sam"));
+        assertTrue(capturePrintAndReturn(this::reopen).isEmpty());
     }
 
     @Test
