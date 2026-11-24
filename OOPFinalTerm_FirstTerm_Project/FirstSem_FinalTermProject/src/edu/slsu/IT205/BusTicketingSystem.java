@@ -3,6 +3,7 @@ package edu.slsu.IT205;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 
 /**
  * Main class: login, then the menu that connects all the other objects.
@@ -19,7 +20,7 @@ import java.util.NoSuchElementException;
  * java edu.slsu.IT205.BusTicketingSystem
  */
 public class BusTicketingSystem {
-    private final BusManager busManager = new BusManager();
+    private final BusManager busManager = new BusManager("buses.txt");
     private final RecordManager recordManager = new RecordManager("tickets.txt", busManager);
     private final ConsoleInput input = new ConsoleInput();
     private final LogIn login = new LogIn(input);
@@ -78,6 +79,9 @@ public class BusTicketingSystem {
                     case 8:
                         viewSeatMap();
                         break;
+                    case 9:
+                        addBusRoute();
+                        break;
                     case 0:
                         System.out.println("\nLogged out.");
                         break;
@@ -110,6 +114,7 @@ public class BusTicketingSystem {
         System.out.println("  [6] View Passengers on a Bus");
         System.out.println("  [7] Sales Summary per Route (Admin only)");
         System.out.println("  [8] View Seat Map of a Bus");
+        System.out.println("  [9] Add a Bus Route (Admin only)");
         System.out.println("  [0] Logout");
         System.out.println("==========================================");
     }
@@ -219,6 +224,116 @@ public class BusTicketingSystem {
         }
         System.out.println("-------------------------------------------------------");
         System.out.println(tickets.size() + " of " + bus.getCapacity() + " seats booked.");
+    }
+
+    // ===================== ADD A BUS ROUTE =====================
+
+    private void addBusRoute() {
+        // Only an Admin may add routes
+        if (!isAdmin()) {
+            System.out.println("\nAccess denied. Only an Admin can add a bus route.");
+            return;
+        }
+
+        System.out.println("\n----------------- ADD A BUS ROUTE -----------------");
+        System.out.println("Type 'cancel' at any question to go back.");
+
+        String route = askText("Enter route (for example Maasin City - Cebu City): ", BusManager::cleanRoute);
+        if (route == null) {
+            routeNotAdded();
+            return;
+        }
+        String departure = askText("Enter departure time (for example 06:30 AM): ", BusManager::cleanDeparture);
+        if (departure == null) {
+            routeNotAdded();
+            return;
+        }
+        Double fare = askFare();
+        if (fare == null) {
+            routeNotAdded();
+            return;
+        }
+        Integer seats = askSeats();
+        if (seats == null) {
+            routeNotAdded();
+            return;
+        }
+
+        System.out.println("\n------------------- NEW ROUTE SUMMARY -------------------");
+        System.out.println("Route      : " + route);
+        System.out.println("Departure  : " + departure);
+        System.out.printf("Fare       : P%.2f%n", fare);
+        System.out.println("Seats      : " + seats);
+        System.out.println("--------------------------------------------------------");
+        String confirm = input.readLine("Add this route? (y/n): ");
+        if (!confirm.equalsIgnoreCase("y")) {
+            System.out.println("Adding the route was aborted. Nothing was saved.");
+            return;
+        }
+
+        try {
+            Bus bus = busManager.addRoute(route, departure, fare, seats);
+            System.out.println("Route added as Bus " + bus.getId() + ". It now appears in the bus list.");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage()); // for example: that route and time already exist
+        }
+    }
+
+    private void routeNotAdded() {
+        System.out.println("Cancelled. No route was added.");
+    }
+
+    /** Asks until the answer is valid. Returns null if the user types cancel. */
+    private String askText(String prompt, Function<String, String> cleaner) {
+        while (true) {
+            String answer = input.readLine(prompt);
+            if (answer.equalsIgnoreCase("cancel"))
+                return null;
+            try {
+                return cleaner.apply(answer);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Asks for the fare until it is valid. Returns null if the user types cancel.
+     */
+    private Double askFare() {
+        while (true) {
+            String answer = input.readLine("Enter fare in pesos (for example 250): ");
+            if (answer.equalsIgnoreCase("cancel"))
+                return null;
+            try {
+                return BusManager.cleanFare(Double.parseDouble(answer));
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Asks for the number of seats until it is valid. Returns null if the user
+     * types cancel.
+     */
+    private Integer askSeats() {
+        while (true) {
+            String answer = input.readLine("Enter number of seats (1-" + BusManager.MAX_SEATS + "): ");
+            if (answer.equalsIgnoreCase("cancel"))
+                return null;
+            try {
+                int seats = Integer.parseInt(answer);
+                BusManager.checkSeats(seats);
+                return seats;
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     private void viewSeatMap() {
